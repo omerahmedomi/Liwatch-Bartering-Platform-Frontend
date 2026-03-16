@@ -1,0 +1,94 @@
+"use client"; // Required for state and animations
+
+import { useState } from "react";
+import { Box, Menu, X, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const navLinks = [
+    { name: "How it works", href: "#" },
+    { name: "Explore", href: "#" },
+    { name: "Community", href: "#" },
+  ];
+
+  return (
+    <nav className="fixed top-0 w-full z-[100] border-b border-white/10 bg-zinc-900/90 backdrop-blur-xl">
+      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        {/* Logo */}
+        <div className="flex items-center gap-2 group cursor-pointer">
+          <div className="bg-blue-600 p-px size-10 rounded-full group-hover:rotate-12 transition-transform">
+            {/* <Box className="text-white w-6 h-6" /> */}
+            <img src={'./liwatch-logo.png'} className="w-full max-w-full rounded-full"/>
+          </div>
+          <span className="text-2xl font-black text-white tracking-tighter italic">
+            LIWATCH
+          </span>
+        </div>
+
+        {/* Desktop Links */}
+        <div className="hidden md:flex items-center gap-10 text-slate-300 font-medium text-sm tracking-wide">
+          {navLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              className="hover:text-blue-400 transition-colors uppercase"
+            >
+              {link.name}
+            </a>
+          ))}
+        </div>
+
+        {/* Desktop Auth */}
+        <div className="hidden md:flex items-center gap-6">
+          <button className="text-white font-semibold hover:text-blue-400 transition-colors">
+            Log in
+          </button>
+          <button className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold flex items-center gap-2 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 transition-all">
+            Join Platform <ArrowRight size={16} />
+          </button>
+        </div>
+
+        {/* Mobile Toggle */}
+        <button
+          className="md:hidden text-white p-2"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-20 left-0 w-full bg-slate-950 border-b border-white/10 p-6 flex flex-col gap-6 md:hidden z-[99]"
+          >
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className="text-xl font-semibold text-white border-b border-white/5 pb-4"
+                onClick={() => setIsOpen(false)}
+              >
+                {link.name}
+              </a>
+            ))}
+            <div className="flex flex-col gap-4 pt-4">
+              <button className="w-full py-4 text-white font-bold border border-white/10 rounded-2xl">
+                Log In
+              </button>
+              <button className="w-full py-4 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/20">
+                Get Started
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
+  );
+}
