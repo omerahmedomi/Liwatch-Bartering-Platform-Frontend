@@ -18,7 +18,11 @@ export default function Navbar() {
     <nav className="fixed top-0 w-full z-[100] border-b border-slate-300 bg-white/80 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-2 group cursor-pointer">
+        <Link
+          href="/"
+          className="flex items-center gap-2 group cursor-pointer"
+          aria-label="Go to home"
+        >
           <div className="bg-indigo-600 p-px size-10 rounded-full group-hover:rotate-12 transition-transform">
             <img
               src={"/liwatch-logo.png"}
@@ -29,7 +33,7 @@ export default function Navbar() {
           <span className="text-2xl font-black text-slate-900 tracking-tighter italic">
             LIWATCH
           </span>
-        </div>
+        </Link>
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-10 text-slate-600 font-medium text-sm tracking-wide">
