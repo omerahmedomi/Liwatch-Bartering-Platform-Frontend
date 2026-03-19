@@ -1,7 +1,8 @@
 "use client"; // Required for state and animations
 
 import { useState } from "react";
-import { Box, Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
@@ -17,10 +18,14 @@ export default function Navbar() {
     <nav className="fixed top-0 w-full z-[100] border-b border-slate-300 bg-white/80 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-2 group cursor-pointer">
+        <Link
+          href="/"
+          className="flex items-center gap-2 group cursor-pointer"
+          aria-label="Go to home"
+        >
           <div className="bg-indigo-600 p-px size-10 rounded-full group-hover:rotate-12 transition-transform">
             <img
-              src={"./liwatch-logo.png"}
+              src={"/liwatch-logo.png"}
               className="w-full max-w-full rounded-full"
               alt="Logo"
             />
@@ -28,7 +33,7 @@ export default function Navbar() {
           <span className="text-2xl font-black text-slate-900 tracking-tighter italic">
             LIWATCH
           </span>
-        </div>
+        </Link>
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-10 text-slate-600 font-medium text-sm tracking-wide">
@@ -45,12 +50,18 @@ export default function Navbar() {
 
         {/* Desktop Auth */}
         <div className="hidden md:flex items-center gap-6">
-          <button className="text-slate-700 font-semibold hover:text-indigo-600 transition-colors">
+          <Link
+            href="/auth?mode=login"
+            className="text-slate-700 font-semibold hover:text-indigo-600 transition-colors"
+          >
             Log in
-          </button>
-          <button className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-bold flex items-center gap-2 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/20 transition-all">
+          </Link>
+          <Link
+            href="/auth?mode=signup"
+            className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-bold flex items-center gap-2 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/20 transition-all"
+          >
             Join Platform <ArrowRight size={16} />
-          </button>
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
@@ -82,12 +93,20 @@ export default function Navbar() {
               </a>
             ))}
             <div className="flex flex-col gap-4 pt-4">
-              <button className="w-full py-4 text-slate-700 font-bold border border-slate-200 rounded-2xl">
+              <Link
+                href="/auth?mode=login"
+                onClick={() => setIsOpen(false)}
+                className="w-full py-4 text-slate-700 font-bold border border-slate-200 rounded-2xl text-center"
+              >
                 Log In
-              </button>
-              <button className="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/20">
+              </Link>
+              <Link
+                href="/auth?mode=signup"
+                onClick={() => setIsOpen(false)}
+                className="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/20 text-center"
+              >
                 Get Started
-              </button>
+              </Link>
             </div>
           </motion.div>
         )}
