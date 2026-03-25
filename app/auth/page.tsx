@@ -36,6 +36,21 @@ export default function AuthPage() {
     confirmPassword: "",
   });
 
+  // helper to check password strength
+  const passwordCriteria = useMemo(() => {
+    const pwd = formData.password;
+    return [
+      { label: "At least 8 characters", met: pwd.length >= 8 },
+      { label: "At least one number", met: /\d/.test(pwd) },
+      {
+        label: "At least one special character (@$!%*?)",
+        met: /[@$!%*?&]/.test(pwd),
+      },
+      { label: "At least one uppercase letter", met: /[A-Z]/.test(pwd) },
+    ];
+  }, [formData.password]);
+
+  const isPasswordStrong = passwordCriteria.every((c) => c.met);
   useEffect(() => {
     // Keep the UI in sync with the query param
     setMode(initialMode);
@@ -61,18 +76,19 @@ export default function AuthPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    if (mode === "signup" && !isPasswordStrong) return;
     if (mode === "signup") {
       setRegistrationErrorMessage(null);
     } else setLoginErrorMessage(null);
 
     try {
       if (mode === "signup") {
-        // 1. Validation: Match Passwords
+        // validation
         if (formData.password !== formData.confirmPassword) {
           throw new Error("Passwords do not match");
         }
 
-        // 2. Register User
+        // register User
         const response = await api.post("/api/auth/register", {
           fullName: formData.fullName,
           email: formData.email,
@@ -85,17 +101,17 @@ export default function AuthPage() {
         );
         switchMode("login");
       } else {
-        // 3. Call Verify/Login (Matches your LoginUserDto)
+        // login user
         const response = await api.post("/api/auth/login", {
           email: formData.email,
           password: formData.password,
         });
 
-        // Backend returns: ResponseEntity.ok(Map.of("token", token, "email", email))
+        // backend returns {token,email}
         const { token } = response.data;
         localStorage.setItem("liwatch_token", token);
 
-        // 4. Success Redirect
+        // sucess redirect
         router.push("/");
       }
     } catch (err: any) {
@@ -454,6 +470,28 @@ export default function AuthPage() {
                         )}
                       </button>
                     </div>
+                    {/* --- password strength indicator --- */}
+                    {mode === "signup" && formData.password.length > 0 && (
+                      <div className="mt-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl animate-in fade-in slide-in-from-top-1 duration-300">
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                          Password Requirements
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {passwordCriteria.map((c, i) => (
+                            <div key={i} className="flex items-center gap-2">
+                              <div
+                                className={`size-1.5 rounded-full transition-colors duration-300 ${c.met ? "bg-emerald-500" : "bg-slate-300"}`}
+                              />
+                              <span
+                                className={`text-xs transition-colors duration-300 ${c.met ? "text-emerald-700 font-medium" : "text-slate-400"}`}
+                              >
+                                {c.label}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -499,7 +537,7 @@ export default function AuthPage() {
                   <button
                     type="submit"
                     className="w-full bg-indigo-600 text-white px-8 py-3 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/20 transition-all cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-none disabled:bg-gray-400"
-                    disabled={isLoading}
+                    disabled={isLoading || (mode === "signup" && !isPasswordStrong)}
                   >
                     {isLoading ? (
                       "Authenticating..."
@@ -531,8 +569,6 @@ export default function AuthPage() {
           </div>
         </div>
       </main>
-
-      {/* <Footer /> */}
     </div>
   );
 }
