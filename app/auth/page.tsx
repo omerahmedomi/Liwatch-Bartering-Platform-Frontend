@@ -7,6 +7,7 @@ import { ArrowRight, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import api from "@/lib/axios";
 import { X } from "lucide-react";
 import ErrorDisplay from "@/components/ErrorDisplay";
+import { toast } from "sonner";
 
 type Mode = "login" | "signup";
 
@@ -96,9 +97,10 @@ export default function AuthPage() {
         });
         console.log(response.data);
 
-        alert(
-          "Registration successful! Please check your email for verification.",
-        );
+        toast.success("Verification email sent!", {
+          description: `Check ${formData.email} to activate your account.`,
+          duration: 5000,
+        });
         switchMode("login");
       } else {
         // login user
