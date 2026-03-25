@@ -1,23 +1,28 @@
-"use client"; // Required for state and animations
+"use client"; 
 
 import { useState } from "react";
 import { Menu, X, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Navbar() {
+type Props = {
+  isLoggedIn:boolean;
+}
+
+export default function Navbar({isLoggedIn}:Props) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const navLinks = [
-    { name: "How it works", href: "#" },
+  const navLinks = isLoggedIn ? []:[
+    { name: "How it works", href: "/#howitworks" },
     { name: "Explore", href: "#" },
     { name: "Community", href: "#" },
   ];
 
   return (
-    <nav className="fixed top-0 w-full z-[100] border-b border-slate-300 bg-white/80 backdrop-blur-xl">
+    <nav className="fixed top-0 w-full z-100 border-b border-slate-300 bg-white/80 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo */}
+  
         <Link
           href="/"
           className="flex items-center gap-2 group cursor-pointer"
@@ -49,20 +54,22 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Auth */}
-        <div className="hidden md:flex items-center gap-6">
-          <Link
-            href="/auth?mode=login"
-            className="text-slate-700 font-semibold hover:text-indigo-600 transition-colors"
-          >
-            Log in
-          </Link>
-          <Link
-            href="/auth?mode=signup"
-            className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-bold flex items-center gap-2 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/20 transition-all"
-          >
-            Join Platform <ArrowRight size={16} />
-          </Link>
-        </div>
+        {!isLoggedIn && (
+          <div className="hidden md:flex items-center gap-6">
+            <Link
+              href="/auth?mode=login"
+              className="text-slate-700 font-semibold hover:text-indigo-600 transition-colors"
+            >
+              Log in
+            </Link>
+            <Link
+              href="/auth?mode=signup"
+              className="bg-indigo-600 text-white px-6 py-2.5 rounded-full font-bold flex items-center gap-2 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/20 transition-all"
+            >
+              Join Platform <ArrowRight size={16} />
+            </Link>
+          </div>
+        )}
 
         {/* Mobile Toggle */}
         <button
@@ -92,22 +99,24 @@ export default function Navbar() {
                 {link.name}
               </a>
             ))}
-            <div className="flex flex-col gap-4 pt-4">
-              <Link
-                href="/auth?mode=login"
-                onClick={() => setIsOpen(false)}
-                className="w-full py-4 text-slate-700 font-bold border border-slate-200 rounded-2xl text-center"
-              >
-                Log In
-              </Link>
-              <Link
-                href="/auth?mode=signup"
-                onClick={() => setIsOpen(false)}
-                className="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/20 text-center"
-              >
-                Get Started
-              </Link>
-            </div>
+            {!isLoggedIn && (
+              <div className="flex flex-col gap-4 pt-4">
+                <Link
+                  href="/auth?mode=login"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full py-4 text-slate-700 font-bold border border-slate-200 rounded-2xl text-center"
+                >
+                  Log In
+                </Link>
+                <Link
+                  href="/auth?mode=signup"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/20 text-center"
+                >
+                  Get Started
+                </Link>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
