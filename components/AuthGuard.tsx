@@ -3,19 +3,16 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { isTokenValid } from "@/lib/auth";
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("liwatch_token");
-
-    if (!token) {
-      // 1. Not logged in? Send to signup
-      router.push("/auth?mode=signup");
+    if (!isTokenValid()) {
+      router.push("/auth?mode=login&expired=true");
     } else {
-      // 2. Logged in? Allow them to see the page
       setIsChecking(false);
     }
   }, [router]);

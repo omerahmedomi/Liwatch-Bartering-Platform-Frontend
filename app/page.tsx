@@ -7,18 +7,15 @@ import Features from "@/components/Features";
 import HowItWorks from "@/components/HowItWorks";
 import Footer from "@/components/Footer";
 import UserHomePage from "@/components/homepage/UserHomePage";
+import { isTokenValid } from "@/lib/auth";
 
 export default function HomePage() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
-  const setAuthState = useEffectEvent((token:string | null)=>{
-    setIsLoggedIn(!!token)
-  })
-
   useEffect(() => {
-    // Check if token exists in browser storage
-    const token = localStorage.getItem("liwatch_token");
-    setAuthState(token); // true if token exists, false otherwise
+    // check token existence and validity
+    const isValid = isTokenValid();
+    setIsLoggedIn(isValid);
   }, []);
 
   // to prevent some flickering
