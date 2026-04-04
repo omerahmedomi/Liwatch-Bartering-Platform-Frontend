@@ -11,7 +11,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isTokenValid()) {
-      router.push("/auth?mode=login&expired=true");
+      router.push("/auth?mode=login");
     } else {
       setIsChecking(false);
     }
