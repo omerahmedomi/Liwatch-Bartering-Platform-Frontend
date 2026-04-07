@@ -10,9 +10,11 @@ export const uploadToCloudinary = async (file: File): Promise<string> => {
       body: formData,
     },
   );
+  
 
   if (!response.ok) throw new Error("Image upload failed");
 
   const data = await response.json();
+  console.log("CLOUDINARY RESPONSE:", data);
   return data.secure_url;
 };

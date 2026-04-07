@@ -49,7 +49,7 @@ export function LocationAutocomplete({
           setIsOpen(true);
         }}
         onFocus={() => setIsOpen(true)}
-        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 rounded-2xl border border-slate-100 focus:border-indigo-200 focus:ring-2 focus:ring-indigo-500/10 outline-none font-bold text-sm transition-all"
+        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 rounded-2xl border border-slate-100 focus:border-indigo-200 focus:ring-2 focus:ring-indigo-500/10 outline-none font-bold text-xs  transition-all"
         // required
       />
 
