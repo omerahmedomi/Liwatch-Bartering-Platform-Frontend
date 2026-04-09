@@ -83,7 +83,7 @@ export default function PostCard({ post }: { post: any }) {
 
   return (
     <Link href={`/post/${post?.postId}`} className="group block h-full">
-      <div className="bg-white h-full flex flex-col rounded-[2.5rem] border border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-indigo-100 transition-all duration-500 hover:-translate-y-2">
+      <div className="bg-white h-full flex flex-col rounded-lg border border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-indigo-100 transition-all duration-500 hover:-translate-y-2">
         {/* ========================================== */}
         {/* TOP: Image Carousel & Floating Badges      */}
         {/* ========================================== */}

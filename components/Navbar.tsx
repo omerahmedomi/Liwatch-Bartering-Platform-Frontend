@@ -124,9 +124,9 @@ export default function Navbar({ isLoggedIn }: Props) {
 
             {/* --- Menu: Elevated Glass-morphism --- */}
             {isProfileOpen && (
-              <div className="absolute right-0 mt-3 w-64 rounded-sm  bg-white/95 backdrop-blur-xl border border-slate-200/60 shadow-[0_20px_50px_rgba(79,70,229,0.1)] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="absolute right-0 mt-3 top-full w-64 rounded-sm  bg-white/95 backdrop-blur-xl border border-slate-200/60 shadow-[0_20px_50px_rgba(79,70,229,0.1)] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-300">
                 {/* Header: User Context */}
-                <div className="px-5 py-4 bg-slate-50/50 border-b border-slate-100">
+                <div className="px-5 py-4 bg-slate-50/50 border-b border-slate-100 mt-3">
                   <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.15em] mb-1">
                     Signed in as
                   </p>
