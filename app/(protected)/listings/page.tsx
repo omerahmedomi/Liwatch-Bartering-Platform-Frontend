@@ -99,7 +99,7 @@ function ListingsContent() {
 
   return (
     <>
-    <Navbar isLoggedIn={isTokenValid()}/>
+    {/* <Navbar isLoggedIn={isTokenValid()}/> */}
       <div className="max-w-7xl mx-auto px-6">
         {/* <Navbar/> */}
         {/* --- Search & Main Filters Bar --- */}

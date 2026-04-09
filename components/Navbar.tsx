@@ -42,7 +42,7 @@ export default function Navbar({ isLoggedIn }: Props) {
 
   const navLinks = isLoggedIn
     ? [
-        { name: "Listings", href: "#" },
+        { name: "Listings", href: "/listings" },
         { name: "Messages", href: "#" },
         { name: "Community", href: "#" },
       ]
