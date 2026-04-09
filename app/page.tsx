@@ -2,9 +2,9 @@
 
 import { useEffect, useEffectEvent, useState } from "react";
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import Features from "@/components/Features";
-import HowItWorks from "@/components/HowItWorks";
+import Hero from "@/components/homepage/landing/Hero";
+import Features from "@/components/homepage/landing/Features";
+import HowItWorks from "@/components/homepage/landing/HowItWorks";
 import Footer from "@/components/Footer";
 import UserHomePage from "@/components/homepage/UserHomePage";
 import { isTokenValid } from "@/lib/auth";

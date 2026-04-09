@@ -11,7 +11,10 @@ const Hero = () => {
           playsInline
           className="w-full h-full object-cover opacity-30"
         >
-          <source src="/hero-network.mp4" type="video/mp4" />
+          <source
+            src="https://www.pexels.com/download/video/7102266/"
+            type="video/mp4"
+          />
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-slate-100/80 via-white/40 to-slate-100/80" />
       </div>

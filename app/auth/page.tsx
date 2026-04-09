@@ -3,9 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
-
 import api from "@/lib/axios";
-import { X } from "lucide-react";
 import ErrorDisplay from "@/components/ErrorDisplay";
 import { toast } from "sonner";
 
@@ -74,7 +72,7 @@ export default function AuthPage() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setIsLoading(true);
     if (mode === "signup" && !isPasswordStrong) return;
