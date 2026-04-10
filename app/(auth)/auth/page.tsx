@@ -1,25 +1,32 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRight, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+
 import api from "@/lib/axios";
-import ErrorDisplay from "@/components/ErrorDisplay";
+import { getErrorMessage } from "@/lib/error";
 import { toast } from "sonner";
 
-type Mode = "login" | "signup";
+import AuthBrandPanel from "@/components/auth/AuthBrandPanel";
+import AuthModeToggle from "@/components/auth/AuthModeToggle";
+import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
+import LoginCredentialsForm from "@/components/auth/LoginCredentialsForm";
+import SignupRegistrationForm from "@/components/auth/SignupRegistrationForm";
+import { AuthFormData, AuthMode } from "@/components/auth/auth.types";
+
+const googleOAuthUrl = "http://localhost:8080/oauth2/authorization/google";
 
 export default function AuthPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const modeParam = searchParams.get("mode");
-  const initialMode: Mode = modeParam === "signup" ? "signup" : "login";
+  const initialMode: AuthMode = modeParam === "signup" ? "signup" : "login";
 
-  const [mode, setMode] = useState<Mode>(initialMode);
+  const [mode, setMode] = useState<AuthMode>(initialMode);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false);
   const [registrationErrorMessage, setRegistrationErrorMessage] = useState<
     string | null
@@ -27,31 +34,29 @@ export default function AuthPage() {
   const [loginErrorMessage, setLoginErrorMessage] = useState<string | null>(
     null,
   );
-
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<AuthFormData>({
     fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
 
-  // helper to check password strength
   const passwordCriteria = useMemo(() => {
-    const pwd = formData.password;
+    const password = formData.password;
     return [
-      { label: "At least 8 characters", met: pwd.length >= 8 },
-      { label: "At least one number", met: /\d/.test(pwd) },
+      { label: "At least 8 characters", met: password.length >= 8 },
+      { label: "At least one number", met: /\d/.test(password) },
       {
         label: "At least one special character (@$!%*?)",
-        met: /[@$!%*?&]/.test(pwd),
+        met: /[@$!%*?&]/.test(password),
       },
-      { label: "At least one uppercase letter", met: /[A-Z]/.test(pwd) },
+      { label: "At least one uppercase letter", met: /[A-Z]/.test(password) },
     ];
   }, [formData.password]);
 
-  const isPasswordStrong = passwordCriteria.every((c) => c.met);
+  const isPasswordStrong = passwordCriteria.every((criterion) => criterion.met);
+
   useEffect(() => {
-    // Keep the UI in sync with the query param
     setMode(initialMode);
   }, [initialMode]);
 
@@ -59,41 +64,52 @@ export default function AuthPage() {
     return mode === "login" ? "Log in to your account" : "Create your account";
   }, [mode]);
 
-  function switchMode(nextMode: Mode) {
+  const switchMode = (nextMode: AuthMode) => {
     setMode(nextMode);
+    setLoginErrorMessage(null);
+    setRegistrationErrorMessage(null);
     router.replace(`/auth?mode=${nextMode}`, { scroll: false });
-  }
+  };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
+  const clearCurrentError = () => {
+    if (mode === "signup") {
+      setRegistrationErrorMessage(null);
+      return;
+    }
+
+    setLoginErrorMessage(null);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    clearCurrentError();
+    setFormData((current) => ({
+      ...current,
       [name]: value,
     }));
   };
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (mode === "signup" && !isPasswordStrong) {
+      return;
+    }
+
     setIsLoading(true);
-    if (mode === "signup" && !isPasswordStrong) return;
-    if (mode === "signup") {
-      setRegistrationErrorMessage(null);
-    } else setLoginErrorMessage(null);
+    clearCurrentError();
 
     try {
       if (mode === "signup") {
-        // validation
         if (formData.password !== formData.confirmPassword) {
           throw new Error("Passwords do not match");
         }
 
-        // register User
-        const response = await api.post("/api/auth/register", {
+        await api.post("/api/auth/register", {
           fullName: formData.fullName,
           email: formData.email,
           password: formData.password,
         });
-        console.log(response.data);
 
         toast.success("Verification email sent!", {
           description: `Check ${formData.email} to activate your account.`,
@@ -101,115 +117,39 @@ export default function AuthPage() {
         });
         switchMode("login");
       } else {
-        // login user
         const response = await api.post("/api/auth/login", {
           email: formData.email,
           password: formData.password,
         });
 
-        // backend returns {token,email}
         const { token } = response.data;
         localStorage.setItem("liwatch_token", token);
-
-        // sucess redirect
         router.push("/");
       }
-    } catch (err: any) {
-      console.log(err);
+    } catch (error: unknown) {
+      console.log(error);
+      const message = getErrorMessage(error);
 
-      const message =
-        err.response?.data || err.message || "An unexpected error occurred";
-      if (mode === "signup")
+      if (mode === "signup") {
         setRegistrationErrorMessage(
           typeof message === "string" ? message : "Authentication failed",
         );
-      else
+      } else {
         setLoginErrorMessage(
           typeof message === "string" ? message : "Authentication failed",
         );
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className=" bg-slate-50">
-      {/* <Navbar /> */}
-
+    <div className="bg-slate-50">
       <main className="pt-18 pb-16">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-10 items-stretch">
-            {/* Left: brand / trust panel */}
-            <div className="hidden lg:flex flex-col justify-center p-10 rounded-3xl bg-white border border-slate-200 shadow-lg shadow-indigo-500/5">
-              <div className="flex items-center gap-3">
-                <div className="bg-indigo-600 p-px size-10 rounded-full">
-                  <img
-                    src="/liwatch-logo.png"
-                    alt="LIWATCH logo"
-                    className="w-full h-full rounded-full"
-                  />
-                </div>
-                <div>
-                  <div className="text-2xl font-black text-slate-900 tracking-tighter italic">
-                    LIWATCH
-                  </div>
-                  <div className="text-sm font-semibold text-slate-600">
-                    Trade goods. Build trust.
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8">
-                <div className="text-slate-900 text-3xl font-extrabold leading-tight">
-                  Swap. Trade. <span className="text-indigo-600">Thrive.</span>
-                </div>
-                <p className="mt-4 text-slate-600 leading-relaxed">
-                  Secure exchanges, real-time chat, and a community built on
-                  verified profiles.
-                </p>
-              </div>
-
-              <div className="mt-8 space-y-4">
-                {[
-                  {
-                    title: "Verified users",
-                    desc: "Reduce fraud with trusted profiles.",
-                  },
-                  {
-                    title: "Secure exchanges",
-                    desc: "Escrow-style flow for confidence.",
-                  },
-                  {
-                    title: "Fast communication",
-                    desc: "Negotiate terms in real time.",
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.title}
-                    className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-200"
-                  >
-                    <div className="mt-1 size-2 rounded-full bg-indigo-600" />
-                    <div>
-                      <div className="font-bold text-slate-900">
-                        {item.title}
-                      </div>
-                      <div className="text-slate-600 text-sm mt-1">
-                        {item.desc}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-8 flex items-center gap-3">
-                <div className="px-4 py-2 rounded-full bg-indigo-50 text-indigo-700 font-bold text-sm border border-indigo-200">
-                  New here?
-                </div>
-                <div className="text-sm text-slate-600">
-                  Switch to Signup anytime.
-                </div>
-              </div>
-            </div>
+            <AuthBrandPanel />
 
             <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-lg shadow-indigo-500/5">
               <div className="mb-8">
@@ -218,7 +158,6 @@ export default function AuthPage() {
                     <h1 className="text-3xl font-extrabold text-slate-900">
                       {mode === "login" ? "Welcome back" : "Create account"}
                     </h1>
-
                     <p className="text-slate-600 mt-2">
                       {mode === "login"
                         ? "Log in to continue bartering."
@@ -226,95 +165,18 @@ export default function AuthPage() {
                     </p>
                   </div>
 
-                  <div className="hidden sm:block bg-slate-100 p-1 rounded-full border border-slate-200">
-                    <div className="flex">
-                      <button
-                        type="button"
-                        onClick={() => switchMode("login")}
-                        className={`px-5 py-2 rounded-full text-sm font-bold  transition-all ${
-                          mode === "login"
-                            ? "bg-white border border-slate-200 text-slate-900 shadow-sm "
-                            : "text-slate-600 hover:text-slate-900 cursor-pointer"
-                        }`}
-                      >
-                        Login
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => switchMode("signup")}
-                        className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
-                          mode === "signup"
-                            ? "bg-white border border-slate-200 text-slate-900 shadow-sm"
-                            : "text-slate-600 hover:text-slate-900 cursor-pointer"
-                        }`}
-                      >
-                        Signup
-                      </button>
-                    </div>
+                  <div className="hidden sm:block">
+                    <AuthModeToggle mode={mode} onChange={switchMode} />
                   </div>
                 </div>
               </div>
 
-              <div className="sm:hidden mb-6 bg-slate-100 p-1 rounded-full border border-slate-200">
-                <div className="flex">
-                  <button
-                    type="button"
-                    onClick={() => switchMode("login")}
-                    className={`flex-1 px-5 py-2 rounded-full text-sm font-bold transition-all ${
-                      mode === "login"
-                        ? "bg-white border border-slate-200 text-slate-900 shadow-sm"
-                        : "text-slate-600 hover:text-slate-900"
-                    }`}
-                  >
-                    Login
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => switchMode("signup")}
-                    className={`flex-1 px-5 py-2 rounded-full text-sm font-bold transition-all ${
-                      mode === "signup"
-                        ? "bg-white border border-slate-200 text-slate-900 shadow-sm"
-                        : "text-slate-600 hover:text-slate-900"
-                    }`}
-                  >
-                    Signup
-                  </button>
-                </div>
-              </div>
-              {/* --- Google OAuth Button --- */}
-              <div className="mb-6">
-                <button
-                  type="button"
-                  onClick={() =>
-                    (window.location.href =
-                      "http://localhost:8080/oauth2/authorization/google")
-                  }
-                  className="w-full flex items-center justify-center gap-3 py-3 border border-slate-200 rounded-2xl bg-white hover:bg-slate-50 transition-all font-bold text-slate-700 shadow-sm group cursor-pointer"
-                >
-                  {/* Google Icon */}
-                  <svg className="size-5" viewBox="0 0 24 24">
-                    <path
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                      fill="#4285F4"
-                    />
-                    <path
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                      fill="#34A853"
-                    />
-                    <path
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
-                      fill="#FBBC05"
-                    />
-                    <path
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                      fill="#EA4335"
-                    />
-                  </svg>
-                  Continue with Google
-                </button>
+              <div className="sm:hidden mb-6">
+                <AuthModeToggle mode={mode} onChange={switchMode} fullWidth />
               </div>
 
-              {/* --- The "Or" Separator --- */}
+              <GoogleSignInButton href={googleOAuthUrl} />
+
               <div className="relative mb-8 text-center">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t border-slate-200"></span>
@@ -323,288 +185,39 @@ export default function AuthPage() {
                   Or use your email
                 </span>
               </div>
+
               {mode === "login" ? (
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  {loginErrorMessage && (
-                    <ErrorDisplay
-                      clearError={() => setLoginErrorMessage(null)}
-                      errorMessage={loginErrorMessage}
-                    />
-                  )}
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Email
-                    </label>
-                    <div className="relative">
-                      <Mail
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                        size={18}
-                      />
-                      <input
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        required
-                        autoComplete="email"
-                        placeholder="you@example.com"
-                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 text-slate-900 placeholder:text-slate-400"
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <Lock
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                        size={18}
-                      />
-                      <input
-                        name="password"
-                        value={formData.password}
-                        type={showPassword ? "text" : "password"}
-                        required
-                        autoComplete="current-password"
-                        placeholder="••••••••"
-                        className="w-full pl-11 pr-11 py-3 rounded-2xl border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 text-slate-900 placeholder:text-slate-400"
-                        onChange={handleInputChange}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword((s: boolean) => !s)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
-                        aria-label={
-                          showPassword ? "Hide password" : "Show password"
-                        }
-                      >
-                        {showPassword ? (
-                          <EyeOff size={18} />
-                        ) : (
-                          <Eye size={18} />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-4 justify-end">
-                    <a
-                      href="#"
-                      className="text-sm font-semibold text-indigo-700 hover:text-indigo-800"
-                    >
-                      Forgot password?
-                    </a>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full bg-indigo-600 text-white px-8 py-3 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/20 transition-all cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-none disabled:bg-gray-400"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      "Authenticating..."
-                    ) : (
-                      <span className="flex items-center">
-                        {primaryCta} <ArrowRight size={18} />
-                      </span>
-                    )}
-                  </button>
-
-                  <div className="pt-2 text-center text-sm text-slate-600">
-                    Don&apos;t have an account?{" "}
-                    <button
-                      type="button"
-                      onClick={() => switchMode("signup")}
-                      className="font-bold text-indigo-700 hover:text-indigo-800 cursor-pointer"
-                    >
-                      Sign up
-                    </button>
-                  </div>
-                </form>
+                <LoginCredentialsForm
+                  errorMessage={loginErrorMessage}
+                  formData={formData}
+                  isLoading={isLoading}
+                  primaryCta={primaryCta}
+                  showPassword={showPassword}
+                  onClearError={clearCurrentError}
+                  onInputChange={handleInputChange}
+                  onModeChange={switchMode}
+                  onSubmit={handleSubmit}
+                  onTogglePassword={() => setShowPassword((current) => !current)}
+                />
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div>
-                    {registrationErrorMessage && (
-                      <ErrorDisplay
-                        clearError={() => setRegistrationErrorMessage(null)}
-                        errorMessage={registrationErrorMessage}
-                      />
-                    )}
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Full name
-                    </label>
-                    <div className="relative">
-                      <User
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                        size={18}
-                      />
-                      <input
-                        name="fullName"
-                        type="text"
-                        value={formData.fullName}
-                        required
-                        autoComplete="name"
-                        placeholder="John Doe"
-                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 text-slate-900 placeholder:text-slate-400"
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Email
-                    </label>
-                    <div className="relative">
-                      <Mail
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                        size={18}
-                      />
-                      <input
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        required
-                        autoComplete="email"
-                        placeholder="you@example.com"
-                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 text-slate-900 placeholder:text-slate-400"
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <Lock
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                        size={18}
-                      />
-                      <input
-                        name="password"
-                        value={formData.password}
-                        type={showPassword ? "text" : "password"}
-                        required
-                        autoComplete="new-password"
-                        placeholder="Create a password"
-                        className="w-full pl-11 pr-11 py-3 rounded-2xl border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 text-slate-900 placeholder:text-slate-400"
-                        onChange={handleInputChange}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword((s: boolean) => !s)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
-                        aria-label={
-                          showPassword ? "Hide password" : "Show password"
-                        }
-                      >
-                        {showPassword ? (
-                          <EyeOff size={18} />
-                        ) : (
-                          <Eye size={18} />
-                        )}
-                      </button>
-                    </div>
-                    {/* --- password strength indicator --- */}
-                    {mode === "signup" && formData.password.length > 0 && (
-                      <div className="mt-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl animate-in fade-in slide-in-from-top-1 duration-300">
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-                          Password Requirements
-                        </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {passwordCriteria.map((c, i) => (
-                            <div key={i} className="flex items-center gap-2">
-                              <div
-                                className={`size-1.5 rounded-full transition-colors duration-300 ${c.met ? "bg-emerald-500" : "bg-slate-300"}`}
-                              />
-                              <span
-                                className={`text-xs transition-colors duration-300 ${c.met ? "text-emerald-700 font-medium" : "text-slate-400"}`}
-                              >
-                                {c.label}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Confirm password
-                    </label>
-                    <div className="relative">
-                      <Lock
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                        size={18}
-                      />
-                      <input
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        type={showConfirmPassword ? "text" : "password"}
-                        required
-                        autoComplete="new-password"
-                        placeholder="Re-enter your password"
-                        className="w-full pl-11 pr-11 py-3 rounded-2xl border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 text-slate-900 placeholder:text-slate-400"
-                        onChange={handleInputChange}
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShowConfirmPassword((s: boolean) => !s)
-                        }
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
-                        aria-label={
-                          showConfirmPassword
-                            ? "Hide confirm password"
-                            : "Show confirm password"
-                        }
-                      >
-                        {showConfirmPassword ? (
-                          <EyeOff size={18} />
-                        ) : (
-                          <Eye size={18} />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full bg-indigo-600 text-white px-8 py-3 rounded-full font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/20 transition-all cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-none disabled:bg-gray-400"
-                    disabled={
-                      isLoading || (mode === "signup" && !isPasswordStrong)
-                    }
-                  >
-                    {isLoading ? (
-                      "Authenticating..."
-                    ) : (
-                      <span className="flex items-center">
-                        {primaryCta} <ArrowRight size={18} />
-                      </span>
-                    )}
-                  </button>
-
-                  <div className="pt-2 text-center text-sm text-slate-600">
-                    Already have an account?{" "}
-                    <button
-                      type="button"
-                      onClick={() => switchMode("login")}
-                      className="font-bold text-indigo-700 hover:text-indigo-800 cursor-pointer"
-                    >
-                      Log in
-                    </button>
-                  </div>
-
-                  <p className="text-xs leading-relaxed text-slate-500">
-                    By continuing, you agree to our Terms and acknowledge our
-                    Privacy Policy.
-                  </p>
-                </form>
+                <SignupRegistrationForm
+                  errorMessage={registrationErrorMessage}
+                  formData={formData}
+                  isLoading={isLoading}
+                  isPasswordStrong={isPasswordStrong}
+                  passwordCriteria={passwordCriteria}
+                  primaryCta={primaryCta}
+                  showConfirmPassword={showConfirmPassword}
+                  showPassword={showPassword}
+                  onClearError={clearCurrentError}
+                  onInputChange={handleInputChange}
+                  onModeChange={switchMode}
+                  onSubmit={handleSubmit}
+                  onToggleConfirmPassword={() =>
+                    setShowConfirmPassword((current) => !current)
+                  }
+                  onTogglePassword={() => setShowPassword((current) => !current)}
+                />
               )}
             </div>
           </div>

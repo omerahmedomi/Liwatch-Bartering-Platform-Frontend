@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import CreatePostForm from "@/components/post/CreatePostForm";
 
 export default function CreatePostPage() {
