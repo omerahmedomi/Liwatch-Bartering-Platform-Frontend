@@ -1,7 +1,7 @@
 export function CardSkeleton() {
   return (
-    <div className="bg-white h-full flex flex-col rounded-[2.5rem] border border-slate-100 overflow-hidden animate-pulse">
-      <div className="relative aspect-square bg-slate-200 shrink-0" />
+    <div className="bg-white h-full flex flex-col rounded-lg border border-slate-100 overflow-hidden animate-pulse">
+      <div className="relative aspect-video bg-slate-200 shrink-0" />
       <div className="p-6 flex flex-col grow space-y-4">
         <div className="flex justify-between">
           <div className="h-4 w-16 bg-slate-200 rounded-md" />

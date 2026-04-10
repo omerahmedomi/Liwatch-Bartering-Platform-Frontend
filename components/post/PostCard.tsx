@@ -84,7 +84,7 @@ export default function PostCard({ post }: { post: Post }) {
     <Link href={`/post/${post?.postId}`} className="group block h-full">
       <div className="bg-white h-full flex flex-col rounded-lg border border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-indigo-100 transition-all duration-500 hover:-translate-y-2">
         <div
-          className="relative aspect-square overflow-hidden bg-slate-100 shrink-0 touch-pan-y"
+          className="relative aspect-video overflow-hidden bg-slate-100 shrink-0 touch-pan-y"
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
