@@ -92,30 +92,34 @@ function ListingsContent() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6">
-      <ListingsFiltersPanel
-        categories={categories}
-        categoryFilter={categoryFilter}
-        exchangeFilter={exchangeFilter}
-        searchQuery={searchQuery}
-        typeFilter={typeFilter}
-        onCategoryFilterChange={setCategoryFilter}
-        onExchangeFilterChange={setExchangeFilter}
-        onSearchQueryChange={setSearchQuery}
-        onTypeFilterChange={setTypeFilter}
-      />
-      <ListingsResultsSection
-        filteredPosts={filteredPosts}
-        loading={loading}
-        onClearFilters={clearFilters}
-      />
+    <div className="max-w-7xl mx-auto ">
+      <div className="sticky -top-18 md:-top-3 z-30">
+        <ListingsFiltersPanel
+          categories={categories}
+          categoryFilter={categoryFilter}
+          exchangeFilter={exchangeFilter}
+          searchQuery={searchQuery}
+          typeFilter={typeFilter}
+          onCategoryFilterChange={setCategoryFilter}
+          onExchangeFilterChange={setExchangeFilter}
+          onSearchQueryChange={setSearchQuery}
+          onTypeFilterChange={setTypeFilter}
+        />
+      </div>
+      <div className="px-6">
+        <ListingsResultsSection
+          filteredPosts={filteredPosts}
+          loading={loading}
+          onClearFilters={clearFilters}
+        />
+      </div>
     </div>
   );
 }
 
 export default function ListingsPage() {
   return (
-    <main className="pt-24 pb-20 min-h-screen bg-slate-50">
+    <main className="pt-20 pb-20 min-h-screen bg-slate-50">
       <Suspense
         fallback={
           <div className="flex h-screen items-center justify-center">

@@ -17,7 +17,7 @@ export default function ListingsResultsSection({
 }: Props) {
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
         {[1, 2, 3, 4, 5, 6, 7, 8].map((skeletonIndex) => (
           <CardSkeleton key={skeletonIndex} />
         ))}
@@ -28,7 +28,7 @@ export default function ListingsResultsSection({
   if (filteredPosts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-32 animate-in fade-in zoom-in-95 duration-500">
-        <div className="size-20 rounded-[2rem] bg-slate-100 flex items-center justify-center text-slate-400 mb-6">
+        <div className="size-20 rounded-4xl bg-slate-100 flex items-center justify-center text-slate-400 mb-6">
           <Search size={32} />
         </div>
         <h3 className="text-2xl font-black text-slate-900 mb-2">
@@ -57,7 +57,7 @@ export default function ListingsResultsSection({
           results
         </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {filteredPosts.map((post) => (
           <PostCard key={post.postId || post.id} post={post} />
         ))}

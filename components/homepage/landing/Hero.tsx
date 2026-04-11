@@ -2,7 +2,7 @@ import React from "react";
 
 const Hero = () => {
   return (
-    <section className="relative pt-20 min-h-[calc(100vh-80px)] flex items-center justify-center text-slate-900 bg-slate-50 overflow-hidden">
+    <section className="relative sm:mt-20 min-h-[calc(100vh-80px)] flex items-center justify-center text-slate-900 bg-slate-50 overflow-hidden">
       <div className="absolute inset-0 z-0">
         <video
           autoPlay
@@ -19,7 +19,7 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-slate-100/80 via-white/40 to-slate-100/80" />
       </div>
 
-      <div className="relative z-10 container mx-auto px-6 py-20 text-center">
+      <div className="relative z-10 container mx-auto px-6  text-center">
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight text-slate-900">
           Swap. Trade. <span className="text-indigo-600">Thrive.</span>
         </h1>

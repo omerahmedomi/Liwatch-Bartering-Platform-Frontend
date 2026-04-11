@@ -30,9 +30,9 @@ export default function ListingsFiltersPanel({
   onTypeFilterChange,
 }: Props) {
   return (
-    <div className="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-slate-100 mb-8 sticky top-20 z-30">
+    <div className="bg-white text-sm  p-4 md:p-6 shadow-sm border-b  border-slate-100 mb-8 ">
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative flex-grow">
+        <div className="relative grow">
           <Search
             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
             size={20}
@@ -50,7 +50,7 @@ export default function ListingsFiltersPanel({
           <div className="flex bg-slate-50 p-1 rounded-2xl shrink-0">
             <button
               onClick={() => onTypeFilterChange("ALL")}
-              className={`px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all ${
+              className={`px-4 py-3 rounded-xl font-bold uppercase tracking-wider transition-all ${
                 typeFilter === "ALL"
                   ? "bg-white text-slate-900 shadow-sm"
                   : "text-slate-500 hover:text-slate-900"
@@ -60,7 +60,7 @@ export default function ListingsFiltersPanel({
             </button>
             <button
               onClick={() => onTypeFilterChange("ITEM")}
-              className={`flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all ${
+              className={`flex items-center gap-1.5 px-4 py-3 rounded-xl  font-bold uppercase tracking-wider transition-all ${
                 typeFilter === "ITEM"
                   ? "bg-white text-indigo-600 shadow-sm"
                   : "text-slate-500 hover:text-slate-900"
@@ -86,7 +86,7 @@ export default function ListingsFiltersPanel({
                 exchangeFilter === "TEMPORARY" ? "ALL" : "TEMPORARY",
               )
             }
-            className={`flex items-center gap-2 px-5 py-3.5 rounded-2xl text-sm font-bold uppercase tracking-wider transition-all border shrink-0 ${
+            className={`flex items-center gap-2 px-5 py-3.5 rounded-2xl  font-bold uppercase tracking-wider transition-all border shrink-0 ${
               exchangeFilter === "TEMPORARY"
                 ? "bg-amber-50 border-amber-200 text-amber-600"
                 : "bg-white border-slate-200 text-slate-500 hover:border-slate-300"
