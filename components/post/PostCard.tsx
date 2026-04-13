@@ -176,7 +176,7 @@ export default function PostCard({ post }: { post: Post }) {
             </div>
             <div className="flex items-center gap-1 text-slate-400 font-bold text-[10px] uppercase">
               <MapPin size={12} />
-              Addis Ababa
+              {post?.location}
             </div>
           </div>
         </div>
