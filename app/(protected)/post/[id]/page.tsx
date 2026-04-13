@@ -87,13 +87,13 @@ export default function PostDetailsPage() {
                 </span>
               </div>
 
-              <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6">
+              <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-6">
                 {post.title}
               </h1>
 
               <div className="flex items-center gap-2 text-slate-500 font-medium">
                 <MapPin size={18} className="text-indigo-500" />
-                Addis Ababa, Ethiopia (Remote Trading Available)
+                {post?.location}
               </div>
             </div>
 
@@ -101,7 +101,7 @@ export default function PostDetailsPage() {
 
             {/* Description */}
             <div>
-              <h2 className="text-xl font-black text-slate-900 mb-4">
+              <h2 className="text-lg font-black text-slate-900 mb-4">
                 Description
               </h2>
               <p className="text-slate-600 leading-relaxed whitespace-pre-line">
@@ -114,11 +114,11 @@ export default function PostDetailsPage() {
               <>
                 <hr className="border-slate-200" />
                 <div>
-                  <h2 className="text-xl font-black text-slate-900 mb-4">
+                  <h2 className="text-lg font-black text-slate-900 mb-4">
                     Service Details
                   </h2>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white p-4 rounded-2xl border border-slate-100">
+                    <div className="bg-white p-4 border-l-3 border-indigo-400">
                       <p className="text-slate-400 text-xs font-bold uppercase mb-1">
                         Duration
                       </p>
@@ -126,7 +126,7 @@ export default function PostDetailsPage() {
                         {post.service.serviceDuration}
                       </p>
                     </div>
-                    <div className="bg-white p-4 rounded-2xl border border-slate-100">
+                    <div className="bg-white p-4 border-l-3 border-indigo-400">
                       <p className="text-slate-400 text-xs font-bold uppercase mb-1">
                         Availability
                       </p>

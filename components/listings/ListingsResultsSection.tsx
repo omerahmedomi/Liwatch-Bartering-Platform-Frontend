@@ -27,7 +27,7 @@ export default function ListingsResultsSection({
 
   if (filteredPosts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 animate-in fade-in zoom-in-95 duration-500">
+      <div className="flex flex-col items-center justify-center py-3 animate-in fade-in zoom-in-95 duration-500">
         <div className="size-20 rounded-4xl bg-slate-100 flex items-center justify-center text-slate-400 mb-6">
           <Search size={32} />
         </div>
@@ -59,7 +59,7 @@ export default function ListingsResultsSection({
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {filteredPosts.map((post) => (
-          <PostCard key={post.postId || post.id} post={post} />
+          <PostCard key={ post.id} post={post} />
         ))}
       </div>
     </>
