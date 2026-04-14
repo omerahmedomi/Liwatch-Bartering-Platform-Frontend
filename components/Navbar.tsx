@@ -44,12 +44,12 @@ export default function Navbar({ isLoggedIn }: Props) {
 
   const navLinks = isLoggedIn ? authenticatedLinks : guestLinks;
 
-   const [contextPromise] = useState(() =>
-     Promise.all([
-       api.get("/api/profile/me"),
-       // api.get(`/api/barter/check/${post?.postId}`)
-     ]),
-   );
+  const [contextPromise] = useState(() =>
+    Promise.all([
+      api.get("/api/profile/me"),
+      // api.get(`/api/barter/check/${post?.postId}`)
+    ]),
+  );
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -79,7 +79,7 @@ export default function Navbar({ isLoggedIn }: Props) {
     setIsOpen(false);
     setIsProfileOpen(false);
   };
- 
+
   return (
     <nav className="fixed top-0 w-full z-100 border-b border-slate-300 bg-white/80 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -89,7 +89,7 @@ export default function Navbar({ isLoggedIn }: Props) {
         {!isLoggedIn ? (
           <NavbarGuestDesktopActions />
         ) : (
-          <Suspense fallback={<LoaderCircle className="animate-spin"/>}>
+          <Suspense fallback={<LoaderCircle className="animate-spin" />}>
             {" "}
             <NavbarProfileMenu
               dropdownRef={dropdownRef}
@@ -109,16 +109,17 @@ export default function Navbar({ isLoggedIn }: Props) {
           {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
-
-      <NavbarMobileDrawer
-        isOpen={isOpen}
-        isLoggedIn={isLoggedIn}
-        links={navLinks}
-        userProfile={demoUserProfile}
-        onClose={() => setIsOpen(false)}
-        onOpenProfile={handleOpenProfile}
-        onLogout={handleLogout}
-      />
+      <Suspense fallback={<LoaderCircle className="animate-spin" />}>
+        <NavbarMobileDrawer
+          isOpen={isOpen}
+          isLoggedIn={isLoggedIn}
+          links={navLinks}
+          userProfilePromise={contextPromise}
+          onClose={() => setIsOpen(false)}
+          onOpenProfile={handleOpenProfile}
+          onLogout={handleLogout}
+        />
+      </Suspense>
     </nav>
   );
 }

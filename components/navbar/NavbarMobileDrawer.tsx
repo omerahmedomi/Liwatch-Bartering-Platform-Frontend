@@ -1,14 +1,16 @@
+"use client"
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 
 import { NavbarLink, NavbarUserProfile } from "./navbar.types";
+import { use } from "react";
 
 type Props = {
   isOpen: boolean;
   isLoggedIn: boolean;
   links: NavbarLink[];
-  userProfile: NavbarUserProfile;
+  userProfilePromise:Promise<any>;
   onClose: () => void;
   onOpenProfile: () => void;
   onLogout: () => void;
@@ -18,11 +20,14 @@ export default function NavbarMobileDrawer({
   isOpen,
   isLoggedIn,
   links,
-  userProfile,
+  userProfilePromise,
   onClose,
   onOpenProfile,
   onLogout,
 }: Props) {
+  const [userProfileRes] = use(userProfilePromise)
+  console.log("userpromise",userProfileRes)
+    const currentUserProfile = userProfileRes.data;
   return (
     <AnimatePresence>
       {isOpen && (
@@ -36,21 +41,26 @@ export default function NavbarMobileDrawer({
             <div className="px-6 py-6 bg-slate-50/80 border-b border-slate-100">
               <div className="flex items-center gap-4">
                 <div className="relative">
-                  <div className="size-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-indigo-200">
-                    {userProfile.initials}
+                  <div className="size-14 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-indigo-200">
+                    {currentUserProfile?.user?.name
+                      .split(" ")[0][0]
+                      .toUpperCase() +
+                      currentUserProfile?.user?.name
+                        .split(" ")[1][0]
+                        .toUpperCase()}
                   </div>
                   <div className="absolute -bottom-1 -right-1 size-4 bg-emerald-500 border-2 border-white rounded-full" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-extrabold text-slate-900 truncate">
-                    {userProfile.fullName}
+                    {currentUserProfile?.user?.name}
                   </h3>
                   <p className="text-xs font-semibold text-slate-500 truncate mb-2">
-                    {userProfile.email}
+                    {currentUserProfile?.user?.email}
                   </p>
                   <div className="flex gap-2">
                     <span className="px-2 py-0.5 rounded-md bg-indigo-100 text-[10px] font-bold text-indigo-700 uppercase tracking-wider">
-                      {userProfile.badge}
+                      {/* {userProfile.badge} */}
                     </span>
                   </div>
                 </div>
