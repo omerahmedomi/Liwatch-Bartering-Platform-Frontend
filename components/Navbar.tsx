@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 
-import { Menu, X } from "lucide-react";
+import { LoaderCircle, LoaderPinwheelIcon, Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import NavbarBrand from "./navbar/NavbarBrand";
@@ -11,6 +11,7 @@ import NavbarGuestDesktopActions from "./navbar/NavbarGuestDesktopActions";
 import NavbarMobileDrawer from "./navbar/NavbarMobileDrawer";
 import NavbarProfileMenu from "./navbar/NavbarProfileMenu";
 import { NavbarLink, NavbarUserProfile } from "./navbar/navbar.types";
+import api from "@/lib/axios";
 
 type Props = {
   isLoggedIn: boolean;
@@ -43,6 +44,12 @@ export default function Navbar({ isLoggedIn }: Props) {
 
   const navLinks = isLoggedIn ? authenticatedLinks : guestLinks;
 
+   const [contextPromise] = useState(() =>
+     Promise.all([
+       api.get("/api/profile/me"),
+       // api.get(`/api/barter/check/${post?.postId}`)
+     ]),
+   );
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -72,7 +79,7 @@ export default function Navbar({ isLoggedIn }: Props) {
     setIsOpen(false);
     setIsProfileOpen(false);
   };
-
+ 
   return (
     <nav className="fixed top-0 w-full z-100 border-b border-slate-300 bg-white/80 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -82,14 +89,17 @@ export default function Navbar({ isLoggedIn }: Props) {
         {!isLoggedIn ? (
           <NavbarGuestDesktopActions />
         ) : (
-          <NavbarProfileMenu
-            dropdownRef={dropdownRef}
-            isOpen={isProfileOpen}
-            userProfile={demoUserProfile}
-            onToggle={() => setIsProfileOpen((current) => !current)}
-            onOpenProfile={handleOpenProfile}
-            onLogout={handleLogout}
-          />
+          <Suspense fallback={<LoaderCircle className="animate-spin"/>}>
+            {" "}
+            <NavbarProfileMenu
+              dropdownRef={dropdownRef}
+              isOpen={isProfileOpen}
+              userProfilePromise={contextPromise}
+              onToggle={() => setIsProfileOpen((current) => !current)}
+              onOpenProfile={handleOpenProfile}
+              onLogout={handleLogout}
+            />
+          </Suspense>
         )}
 
         <button

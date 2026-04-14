@@ -18,6 +18,7 @@ function ActionButton({
   
   const currentUser = userRes?.data;
   const hasRequested = checkRes?.data?.exists;
+  console.log("Current USer",currentUser)
 
  //own post
   if (currentUser?.user?.id === postUserId) {
@@ -65,7 +66,7 @@ export default function PostSidebar({ post }: { post: any }) {
   );
 
   const handleInitiateBarter = () => {
-   
+  //  console.log(current)
     alert("Opening Barter Offer Modal... (To be implemented)");
   };
 
