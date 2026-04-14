@@ -23,7 +23,7 @@ export default function NavbarProfileMenu({
   onLogout,
 }: Props) {
 
-  const [userProfileRes] = use(userProfilePromise)
+  const [userProfileRes] =  use(userProfilePromise)
   const currentUserProfile = userProfileRes.data;
   return (
     <div className="relative hidden md:block rounded-sm!" ref={dropdownRef}>

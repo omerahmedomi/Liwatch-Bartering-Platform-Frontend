@@ -12,6 +12,7 @@ import NavbarMobileDrawer from "./navbar/NavbarMobileDrawer";
 import NavbarProfileMenu from "./navbar/NavbarProfileMenu";
 import { NavbarLink, NavbarUserProfile } from "./navbar/navbar.types";
 import api from "@/lib/axios";
+import { ErrorBoundary } from "react-error-boundary";
 
 type Props = {
   isLoggedIn: boolean;
@@ -44,12 +45,16 @@ export default function Navbar({ isLoggedIn }: Props) {
 
   const navLinks = isLoggedIn ? authenticatedLinks : guestLinks;
 
-  const [contextPromise] = useState(() =>
-    Promise.all([
-      api.get("/api/profile/me"),
-      // api.get(`/api/barter/check/${post?.postId}`)
-    ]),
-  );
+ const [contextPromise] = useState(() => {
+    // 1. If they are a guest, don't even make the network request. Just resolve empty.
+    if (!isLoggedIn) return Promise.resolve([{ data: null }]);
+    
+    // 2. If logged in, make the request, but use .catch() to silently handle expired tokens
+    return Promise.all([
+      api.get("/api/profile/me").catch(() => ({ data: null })),
+    ]);
+  });
+ 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -109,17 +114,19 @@ export default function Navbar({ isLoggedIn }: Props) {
           {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
-      <Suspense fallback={<LoaderCircle className="animate-spin" />}>
-        <NavbarMobileDrawer
-          isOpen={isOpen}
-          isLoggedIn={isLoggedIn}
-          links={navLinks}
-          userProfilePromise={contextPromise}
-          onClose={() => setIsOpen(false)}
-          onOpenProfile={handleOpenProfile}
-          onLogout={handleLogout}
-        />
-      </Suspense>
+      {/* <ErrorBoundary fallback={'Something went wrong'}> */}
+        <Suspense fallback={<LoaderCircle className="animate-spin" />}>
+          <NavbarMobileDrawer
+            isOpen={isOpen}
+            isLoggedIn={isLoggedIn}
+            links={navLinks}
+            userProfilePromise={contextPromise}
+            onClose={() => setIsOpen(false)}
+            onOpenProfile={handleOpenProfile}
+            onLogout={handleLogout}
+          />
+        </Suspense>
+      {/* </ErrorBoundary> */}
     </nav>
   );
 }
