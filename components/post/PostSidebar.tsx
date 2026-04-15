@@ -3,6 +3,7 @@ import { useState, Suspense, use } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ShieldAlert, User, Clock, ArrowRightLeft, CheckCircle, Edit, Loader2, AlertTriangleIcon } from "lucide-react";
 import api from "@/lib/axios";
+import Link from "next/link";
 
 function ActionButton({ 
   fetchPromise, 
@@ -127,7 +128,7 @@ export default function PostSidebar({ post }: { post: any }) {
             <User size={24} className="text-indigo-400" />
           </div>
           <div>
-            <p className="font-black text-slate-900">{authorName}</p>
+            <Link className="font-black text-slate-900" href={`/profile/${post?.user?.id}`}>{authorName}</Link>
             <p className="text-sm text-slate-500 font-medium">
               {post?.user?.email}
             </p>

@@ -99,9 +99,9 @@ export default function NavbarMobileDrawer({
                 </Link>
               </div>
             ) : (
-              <div className="flex flex-col gap-2 pt-4 *:cursor-pointer">
+              <Link className="flex flex-col gap-2 pt-4 *:cursor-pointer" href={`/profile/${currentUserProfile?.profileId}`}>
                 <button
-                  onClick={onOpenProfile}
+                  // onClick={onOpenProfile}
                   className="w-full flex items-center gap-4 p-4 rounded-2xl text-slate-700 font-bold active:bg-slate-50"
                 >
                   <User size={20} className="text-slate-400" /> My Profile
@@ -121,7 +121,7 @@ export default function NavbarMobileDrawer({
                 >
                   <LogOut size={20} /> Sign Out
                 </button>
-              </div>
+              </Link>
             )}
           </div>
         </motion.div>

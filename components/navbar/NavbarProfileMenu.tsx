@@ -4,6 +4,7 @@ import { use, type RefObject } from "react";
 import { ChevronDown, LogOut, Settings, User } from "lucide-react";
 
 import { NavbarUserProfile } from "./navbar.types";
+import Link from "next/link";
 
 type Props = {
   dropdownRef: RefObject<HTMLDivElement | null>;
@@ -25,6 +26,7 @@ export default function NavbarProfileMenu({
 
   const [userProfileRes] =  use(userProfilePromise)
   const currentUserProfile = userProfileRes.data;
+  console.log("Current USr PRo",currentUserProfile)
   return (
     <div className="relative hidden md:block rounded-sm!" ref={dropdownRef}>
       <button
@@ -55,9 +57,9 @@ export default function NavbarProfileMenu({
           </div>
 
           <div className="p-2">
-            <div className="space-y-1 *:cursor-pointer">
+            <Link className="space-y-1 *:cursor-pointer" href={`/profile/${currentUserProfile?.profileId}`}>
               <button
-                onClick={onOpenProfile}
+                // onClick={onOpenProfile}
                 className="w-full flex items-center justify-between px-4 py-2.5 rounded-2xl text-slate-600 hover:bg-white hover:shadow-sm hover:text-indigo-600 transition-all group"
               >
                 <div className="flex items-center gap-3 font-semibold text-sm">
@@ -77,7 +79,7 @@ export default function NavbarProfileMenu({
                 />
                 Settings
               </button>
-            </div>
+            </Link>
 
             <div className="h-px bg-slate-100 my-2 mx-3" />
 

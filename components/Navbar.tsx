@@ -115,7 +115,7 @@ export default function Navbar({ isLoggedIn }: Props) {
         </button>
       </div>
       {/* <ErrorBoundary fallback={'Something went wrong'}> */}
-        <Suspense fallback={<LoaderCircle className="animate-spin" />}>
+        <Suspense >
           <NavbarMobileDrawer
             isOpen={isOpen}
             isLoggedIn={isLoggedIn}
