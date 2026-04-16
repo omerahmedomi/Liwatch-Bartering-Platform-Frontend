@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Edit3, Trash2, ExternalLink, Clock, Tag } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import DeleteConfirm from "../DeleteConfirm";
 
 export default function ListingMiniCard({
   item,
@@ -15,6 +16,15 @@ export default function ListingMiniCard({
 }) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+
+  const handleDeleteClick = async () => {
+    setIsDeleting(true);
+    await onDelete(); // This triggers the handleHideListing in parent
+    setShowConfirm(false);
+    setIsDeleting(false);
+  };
 
   const isService = item.postType === "SERVICE";
   const displayImage = item.mediaList?.[0]?.mediaUrl || null;
@@ -61,16 +71,8 @@ export default function ListingMiniCard({
               <Edit3 size={16} />
             </button>
             <button
-              onClick={() => {
-                if (
-                  window.confirm(
-                    "Are you sure you want to delete this listing?",
-                  )
-                )
-                  onDelete();
-              }}
+              onClick={() => setShowConfirm(true)} // Trigger the custom modal
               className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-white rounded-md transition-all cursor-pointer"
-              title="Delete Listing"
             >
               <Trash2 size={16} />
             </button>
@@ -84,6 +86,13 @@ export default function ListingMiniCard({
           </Link>
         )}
       </div>
+      <DeleteConfirm
+        isOpen={showConfirm}
+        title={item.title}
+        isLoading={isDeleting}
+        onCancel={() => setShowConfirm(false)}
+        onConfirm={handleDeleteClick}
+      />
     </div>
   );
 }

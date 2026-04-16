@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import { ChevronLeft, Loader2, Info } from "lucide-react";
 import api from "@/lib/axios";
 
@@ -59,20 +59,7 @@ export default function PublicProfilePage() {
   }
 
   if (!profile) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
-        <Info size={40} className="text-slate-400 mb-4" />
-        <h2 className="text-xl font-black text-slate-900 mb-2">
-          Profile Not Found
-        </h2>
-        <button
-          onClick={() => router.back()}
-          className="text-indigo-600 font-bold hover:underline cursor-pointer"
-        >
-          Go back to Market
-        </button>
-      </div>
-    );
+   notFound()
   }
 
   return (

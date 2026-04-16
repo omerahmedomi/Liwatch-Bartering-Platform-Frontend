@@ -4,6 +4,7 @@ import { Package, Search, Plus } from "lucide-react";
 import api from "@/lib/axios";
 import ListingMiniCard from "./ListingMiniCard";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function ProfileActiveListings({
   userId,
@@ -21,7 +22,7 @@ export default function ProfileActiveListings({
   const fetchListings = async () => {
     try {
       // Assuming you have an endpoint that returns posts by User ID
-      const res = await api.get(`/api/post/allPosts?page=0&size=50`);
+      const res = await api.get(`/api/post/userPost/${userId}`);
       setListings(res.data.content);
     } catch (err) {
       console.error("Failed to fetch listings", err);
@@ -37,11 +38,16 @@ export default function ProfileActiveListings({
   // 2. Handle Delete (Passed down to child card)
   const handleDelete = async (postId: number) => {
     try {
-      await api.delete(`/api/post/${postId}`);
+      await api.delete(`/api/post/deletePost/${postId}`);
       // Remove from local state instantly for snappy UI
       setListings((prev) => prev.filter((item) => item.postId !== postId));
+      toast.success("Listing deleted successfully", {
+        description: "Your marketplace has been updated.",
+        className:
+          "bg-white border-l-4 border-emerald-500 font-bold shadow-2xl p-4",
+      });
     } catch (err) {
-      alert("Failed to delete listing");
+      toast.error("Could not delete listing");
     }
   };
 
