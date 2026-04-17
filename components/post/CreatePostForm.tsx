@@ -17,6 +17,7 @@ import {
   CreatePostFormState,
   CreatePostType,
 } from "./create-post/createPostForm.types";
+import { useRouter } from "next/navigation";
 
 const initialFormData: CreatePostFormState = {
   postType: "ITEM",
@@ -45,6 +46,7 @@ export default function CreatePostForm() {
   const previewUrlsRef = useRef<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<CreatePostFormState>(initialFormData);
+  const router = useRouter()
 
   const availableCategories = useMemo(
     () =>
@@ -197,6 +199,7 @@ export default function CreatePostForm() {
       if (response.status === 201) {
         toast.success("Listing Live!", { id: loadingToast });
       }
+      router.push(`/post/${response?.data?.postId}`)
     } catch (error: unknown) {
       console.error("Post Creation Error:", error);
       toast.error("Publishing Failed", {

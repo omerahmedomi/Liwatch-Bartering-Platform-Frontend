@@ -1,8 +1,9 @@
 "use client";
-import { useState, Suspense, use } from "react";
+import { useState, Suspense, use, useEffect } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ShieldAlert, User, Clock, ArrowRightLeft, CheckCircle, Edit, Loader2, AlertTriangleIcon } from "lucide-react";
 import api from "@/lib/axios";
+import Link from "next/link";
 
 function ActionButton({ 
   fetchPromise, 
@@ -18,6 +19,7 @@ function ActionButton({
   
   const currentUser = userRes?.data;
   const hasRequested = checkRes?.data?.exists;
+  console.log("Current USer",currentUser)
 
  //own post
   if (currentUser?.user?.id === postUserId) {
@@ -49,7 +51,51 @@ function ActionButton({
   );
 }
 
+function TraderCard({
+  fetchPromise,
+  authorName,
+  authorEmail,
+}: {
+  fetchPromise: Promise<any>;
+  authorName: string;
+  authorEmail: string;
+}) {
+  // Extract the results from the same promise
+  const [, authorProfileRes] = use(fetchPromise);
+  const profileId = authorProfileRes?.data?.profileId;
+  // console.log("AUthor profile res",authorProfileRes)
+  const profileImage = authorProfileRes?.data?.profileImage;
 
+  return (
+    <div className="bg-white p-6 border-l-3 border-indigo-700">
+      <h3 className="font-bold text-slate-900 mb-4">About the Trader</h3>
+
+      <div className="flex items-center gap-4 mb-6">
+        <div
+          className="size-14 rounded-full bg-indigo-50 flex items-center justify-center border border-indigo-100 shrink-0 bg-center bg-cover"
+          style={{ backgroundImage: `url(${profileImage})` }}
+        >
+          {!profileImage && <User size={24} className="text-indigo-400" />}
+        </div>
+        <Link className="min-w-0" href={`/profile/${profileId}`}>
+          {/* Now using the actual profileId from the fetch! */}
+          <div className="font-black text-slate-900 hover:text-indigo-600 transition-colors ">
+            {authorName}
+          </div>
+          <p className="text-sm text-slate-500 font-medium text-wrap break-all">
+            {authorEmail}
+          </p>
+        </Link>
+      </div>
+
+      <div className="pt-4 border-t border-slate-100 flex justify-between items-center">
+        <button className="text-xs font-bold text-slate-400 hover:text-red-500 flex items-center gap-1.5 transition-colors cursor-pointer">
+          <ShieldAlert size={14} /> Report User
+        </button>
+      </div>
+    </div>
+  );
+}
 export default function PostSidebar({ post }: { post: any }) {
   console.log(post)
 
@@ -60,14 +106,16 @@ export default function PostSidebar({ post }: { post: any }) {
   const [contextPromise] = useState(() => 
     Promise.all([
       api.get("/api/profile/me"),
-      // api.get(`/api/barter/check/${post?.postId}`)
+      api.get(`/api/profile/byUserId/${post?.user?.id}`)
     ])
   );
 
   const handleInitiateBarter = () => {
-   
+  //  console.log(current)
     alert("Opening Barter Offer Modal... (To be implemented)");
   };
+
+  
 
   return (
     <div className="sticky top-28 space-y-6">
@@ -98,7 +146,14 @@ export default function PostSidebar({ post }: { post: any }) {
             </p>
           </div>
         )}
-        <ErrorBoundary fallback={<span className="text-red-500 text-sm flex font-extrabold gap-x-1 items-center"><AlertTriangleIcon strokeWidth={3} size={17}/> Something Went Wrong!</span>}>
+        <ErrorBoundary
+          fallback={
+            <span className="text-red-500 text-sm flex font-extrabold gap-x-1 items-center">
+              <AlertTriangleIcon strokeWidth={3} size={17} /> Something Went
+              Wrong!
+            </span>
+          }
+        >
           <Suspense
             fallback={
               <button
@@ -118,28 +173,25 @@ export default function PostSidebar({ post }: { post: any }) {
         </ErrorBoundary>
       </div>
 
-      <div className="bg-white p-6 border-l-3 border-indigo-700">
-        <h3 className="font-bold text-slate-900 mb-4">About the Trader</h3>
-
-        <div className="flex items-center gap-4 mb-6">
-          <div className="size-14 rounded-full bg-indigo-50 flex items-center justify-center border border-indigo-100 shrink-0">
-            <User size={24} className="text-indigo-400" />
-          </div>
-          <div>
-            <p className="font-black text-slate-900">{authorName}</p>
-            <p className="text-sm text-slate-500 font-medium">
-              {post?.user?.email}
-            </p>
-          </div>
-        </div>
-
-        {/* Security & Moderation */}
-        <div className="pt-4 border-t border-slate-100 flex justify-between items-center">
-          <button className="text-xs font-bold text-slate-400 hover:text-red-500 flex items-center gap-1.5 transition-colors">
-            <ShieldAlert size={14} /> Report User
-          </button>
-        </div>
-      </div>
+      <ErrorBoundary
+        fallback={
+          <span className="text-red-500 text-sm font-extrabold">
+            Failed to load trader info
+          </span>
+        }
+      >
+        <Suspense
+          fallback={
+            <div className="bg-white p-6 border-l-3 border-indigo-700 animate-pulse h-40" />
+          }
+        >
+          <TraderCard
+            fetchPromise={contextPromise}
+            authorName={authorName}
+            authorEmail={post?.user?.email}
+          />
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 }

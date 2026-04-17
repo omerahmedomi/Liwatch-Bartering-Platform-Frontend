@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 
-import { Menu, X } from "lucide-react";
+import { LoaderCircle, LoaderPinwheelIcon, Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import NavbarBrand from "./navbar/NavbarBrand";
@@ -11,6 +11,8 @@ import NavbarGuestDesktopActions from "./navbar/NavbarGuestDesktopActions";
 import NavbarMobileDrawer from "./navbar/NavbarMobileDrawer";
 import NavbarProfileMenu from "./navbar/NavbarProfileMenu";
 import { NavbarLink, NavbarUserProfile } from "./navbar/navbar.types";
+import api from "@/lib/axios";
+import { ErrorBoundary } from "react-error-boundary";
 
 type Props = {
   isLoggedIn: boolean;
@@ -43,6 +45,16 @@ export default function Navbar({ isLoggedIn }: Props) {
 
   const navLinks = isLoggedIn ? authenticatedLinks : guestLinks;
 
+ const [contextPromise] = useState(() => {
+    // 1. If they are a guest, don't even make the network request. Just resolve empty.
+    if (!isLoggedIn) return Promise.resolve([{ data: null }]);
+    
+    // 2. If logged in, make the request, but use .catch() to silently handle expired tokens
+    return Promise.all([
+      api.get("/api/profile/me").catch(() => ({ data: null })),
+    ]);
+  });
+ 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -82,14 +94,19 @@ export default function Navbar({ isLoggedIn }: Props) {
         {!isLoggedIn ? (
           <NavbarGuestDesktopActions />
         ) : (
-          <NavbarProfileMenu
-            dropdownRef={dropdownRef}
-            isOpen={isProfileOpen}
-            userProfile={demoUserProfile}
-            onToggle={() => setIsProfileOpen((current) => !current)}
-            onOpenProfile={handleOpenProfile}
-            onLogout={handleLogout}
-          />
+          <Suspense
+            fallback={<LoaderCircle className="max-md:hidden animate-spin" />}
+          >
+            {" "}
+            <NavbarProfileMenu
+              dropdownRef={dropdownRef}
+              isOpen={isProfileOpen}
+              userProfilePromise={contextPromise}
+              onToggle={() => setIsProfileOpen((current) => !current)}
+              onOpenProfile={handleOpenProfile}
+              onLogout={handleLogout}
+            />
+          </Suspense>
         )}
 
         <button
@@ -99,16 +116,21 @@ export default function Navbar({ isLoggedIn }: Props) {
           {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
-
-      <NavbarMobileDrawer
-        isOpen={isOpen}
-        isLoggedIn={isLoggedIn}
-        links={navLinks}
-        userProfile={demoUserProfile}
-        onClose={() => setIsOpen(false)}
-        onOpenProfile={handleOpenProfile}
-        onLogout={handleLogout}
-      />
+      {/* <ErrorBoundary fallback={'Something went wrong'}> */}
+      <Suspense
+        fallback={<LoaderCircle className="hidden animate-spin" />}
+      >
+        <NavbarMobileDrawer
+          isOpen={isOpen}
+          isLoggedIn={isLoggedIn}
+          links={navLinks}
+          userProfilePromise={contextPromise}
+          onClose={() => setIsOpen(false)}
+          onOpenProfile={handleOpenProfile}
+          onLogout={handleLogout}
+        />
+      </Suspense>
+      {/* </ErrorBoundary> */}
     </nav>
   );
 }

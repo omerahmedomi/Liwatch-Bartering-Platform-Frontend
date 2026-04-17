@@ -1,13 +1,15 @@
-import type { RefObject } from "react";
+"use client";
+import { use, type RefObject } from "react";
 
 import { ChevronDown, LogOut, Settings, User } from "lucide-react";
 
 import { NavbarUserProfile } from "./navbar.types";
+import Link from "next/link";
 
 type Props = {
   dropdownRef: RefObject<HTMLDivElement | null>;
   isOpen: boolean;
-  userProfile: NavbarUserProfile;
+  userProfilePromise: Promise<any>;
   onToggle: () => void;
   onOpenProfile: () => void;
   onLogout: () => void;
@@ -16,19 +18,27 @@ type Props = {
 export default function NavbarProfileMenu({
   dropdownRef,
   isOpen,
-  userProfile,
+  userProfilePromise,
   onToggle,
   onOpenProfile,
   onLogout,
 }: Props) {
+  const [userProfileRes] = use(userProfilePromise);
+  const currentUserProfile = userProfileRes.data;
+  console.log("Current USr PRo", currentUserProfile);
   return (
     <div className="relative hidden md:block rounded-sm!" ref={dropdownRef}>
       <button
         onClick={onToggle}
         className="flex items-center gap-2 p-1.5 rounded-full bg-slate-100/50 hover:bg-slate-100 transition-all duration-200 cursor-pointer border border-transparent hover:border-slate-200"
       >
-        <div className="size-8 rounded-full bg-indigo-600 ring-2 ring-white flex items-center justify-center text-white text-xs font-black shadow-sm">
-          {userProfile.initials}
+        <div
+          className={`size-8 rounded-full bg-indigo-600 ring-2 ring-white flex items-center justify-center text-white text-xs font-black shadow-sm bg-center bg-cover `}
+          style={{ backgroundImage:`url(${currentUserProfile?.profileImage})` }}
+        >
+          {!currentUserProfile?.profileImage &&
+            (currentUserProfile?.user?.name.split(" ")[0][0].toUpperCase() +
+              currentUserProfile?.user?.name.split(" ")[1][0].toUpperCase())}
         </div>
         <ChevronDown
           size={14}
@@ -45,14 +55,17 @@ export default function NavbarProfileMenu({
               Signed in as
             </p>
             <p className="text-sm font-bold text-slate-900 truncate">
-              {userProfile.email}
+              {currentUserProfile?.user?.email}
             </p>
           </div>
 
           <div className="p-2">
-            <div className="space-y-1 *:cursor-pointer">
+            <Link
+              className="space-y-1 *:cursor-pointer"
+              href={`/profile/${currentUserProfile?.profileId}`}
+            >
               <button
-                onClick={onOpenProfile}
+                // onClick={onOpenProfile}
                 className="w-full flex items-center justify-between px-4 py-2.5 rounded-2xl text-slate-600 hover:bg-white hover:shadow-sm hover:text-indigo-600 transition-all group"
               >
                 <div className="flex items-center gap-3 font-semibold text-sm">
@@ -72,7 +85,7 @@ export default function NavbarProfileMenu({
                 />
                 Settings
               </button>
-            </div>
+            </Link>
 
             <div className="h-px bg-slate-100 my-2 mx-3" />
 
