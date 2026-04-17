@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
@@ -10,7 +10,7 @@ type Props = {
   isOpen: boolean;
   isLoggedIn: boolean;
   links: NavbarLink[];
-  userProfilePromise:Promise<any>;
+  userProfilePromise: Promise<any>;
   onClose: () => void;
   onOpenProfile: () => void;
   onLogout: () => void;
@@ -25,9 +25,9 @@ export default function NavbarMobileDrawer({
   onOpenProfile,
   onLogout,
 }: Props) {
-  const [userProfileRes] = use(userProfilePromise)
-  console.log("userpromise",userProfileRes)
-    const currentUserProfile = userProfileRes.data;
+  const [userProfileRes] = use(userProfilePromise);
+  console.log("userpromise", userProfileRes);
+  const currentUserProfile = userProfileRes.data;
   return (
     <AnimatePresence>
       {isOpen && (
@@ -41,13 +41,19 @@ export default function NavbarMobileDrawer({
             <div className="px-6 py-6 bg-slate-50/80 border-b border-slate-100">
               <div className="flex items-center gap-4">
                 <div className="relative">
-                  <div className="size-14 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-indigo-200">
-                    {currentUserProfile?.user?.name
-                      .split(" ")[0][0]
-                      .toUpperCase() +
+                  <div
+                    className="size-14 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xl font-black shadow-lg bg-cover bg-center shadow-indigo-200"
+                    style={{
+                      backgroundImage: `url(${currentUserProfile?.profileImage})`,
+                    }}
+                  >
+                    {!currentUserProfile?.profileImage &&
                       currentUserProfile?.user?.name
-                        .split(" ")[1][0]
-                        .toUpperCase()}
+                        .split(" ")[0][0]
+                        .toUpperCase() +
+                        currentUserProfile?.user?.name
+                          .split(" ")[1][0]
+                          .toUpperCase()}
                   </div>
                   <div className="absolute -bottom-1 -right-1 size-4 bg-emerald-500 border-2 border-white rounded-full" />
                 </div>
@@ -99,7 +105,10 @@ export default function NavbarMobileDrawer({
                 </Link>
               </div>
             ) : (
-              <Link className="flex flex-col gap-2 pt-4 *:cursor-pointer" href={`/profile/${currentUserProfile?.profileId}`}>
+              <Link
+                className="flex flex-col gap-2 pt-4 *:cursor-pointer"
+                href={`/profile/${currentUserProfile?.profileId}`}
+              >
                 <button
                   // onClick={onOpenProfile}
                   className="w-full flex items-center gap-4 p-4 rounded-2xl text-slate-700 font-bold active:bg-slate-50"

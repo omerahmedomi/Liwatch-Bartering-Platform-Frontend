@@ -63,26 +63,29 @@ function TraderCard({
   // Extract the results from the same promise
   const [, authorProfileRes] = use(fetchPromise);
   const profileId = authorProfileRes?.data?.profileId;
-  console.log("AUthor profile res",authorProfileRes)
+  // console.log("AUthor profile res",authorProfileRes)
+  const profileImage = authorProfileRes?.data?.profileImage;
 
   return (
     <div className="bg-white p-6 border-l-3 border-indigo-700">
       <h3 className="font-bold text-slate-900 mb-4">About the Trader</h3>
 
       <div className="flex items-center gap-4 mb-6">
-        <div className="size-14 rounded-full bg-indigo-50 flex items-center justify-center border border-indigo-100 shrink-0">
-          <User size={24} className="text-indigo-400" />
+        <div
+          className="size-14 rounded-full bg-indigo-50 flex items-center justify-center border border-indigo-100 shrink-0 bg-center bg-cover"
+          style={{ backgroundImage: `url(${profileImage})` }}
+        >
+          {!profileImage && <User size={24} className="text-indigo-400" />}
         </div>
-        <div>
+        <Link className="min-w-0" href={`/profile/${profileId}`}>
           {/* Now using the actual profileId from the fetch! */}
-          <Link
-            className="font-black text-slate-900 hover:text-indigo-600 transition-colors"
-            href={`/profile/${profileId}`}
-          >
+          <div className="font-black text-slate-900 hover:text-indigo-600 transition-colors ">
             {authorName}
-          </Link>
-          <p className="text-sm text-slate-500 font-medium">{authorEmail}</p>
-        </div>
+          </div>
+          <p className="text-sm text-slate-500 font-medium text-wrap break-all">
+            {authorEmail}
+          </p>
+        </Link>
       </div>
 
       <div className="pt-4 border-t border-slate-100 flex justify-between items-center">

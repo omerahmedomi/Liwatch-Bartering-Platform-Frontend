@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { use, type RefObject } from "react";
 
 import { ChevronDown, LogOut, Settings, User } from "lucide-react";
@@ -23,10 +23,9 @@ export default function NavbarProfileMenu({
   onOpenProfile,
   onLogout,
 }: Props) {
-
-  const [userProfileRes] =  use(userProfilePromise)
+  const [userProfileRes] = use(userProfilePromise);
   const currentUserProfile = userProfileRes.data;
-  console.log("Current USr PRo",currentUserProfile)
+  console.log("Current USr PRo", currentUserProfile);
   return (
     <div className="relative hidden md:block rounded-sm!" ref={dropdownRef}>
       <button
@@ -34,11 +33,12 @@ export default function NavbarProfileMenu({
         className="flex items-center gap-2 p-1.5 rounded-full bg-slate-100/50 hover:bg-slate-100 transition-all duration-200 cursor-pointer border border-transparent hover:border-slate-200"
       >
         <div
-          className={`size-8 rounded-full bg-indigo-600 ring-2 ring-white flex items-center justify-center text-white text-xs font-black shadow-sm`}
-          style={{backgroundImage:currentUserProfile?.profile}}
+          className={`size-8 rounded-full bg-indigo-600 ring-2 ring-white flex items-center justify-center text-white text-xs font-black shadow-sm bg-center bg-cover `}
+          style={{ backgroundImage:`url(${currentUserProfile?.profileImage})` }}
         >
-          {currentUserProfile?.user?.name.split(" ")[0][0].toUpperCase() +
-            currentUserProfile?.user?.name.split(" ")[1][0].toUpperCase()}
+          {!currentUserProfile?.profileImage &&
+            (currentUserProfile?.user?.name.split(" ")[0][0].toUpperCase() +
+              currentUserProfile?.user?.name.split(" ")[1][0].toUpperCase())}
         </div>
         <ChevronDown
           size={14}
