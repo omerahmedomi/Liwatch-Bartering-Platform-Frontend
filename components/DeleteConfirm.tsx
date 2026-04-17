@@ -20,14 +20,14 @@ export default function DeleteConfirm({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center">
           {/* 1. The Backdrop Blur */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onCancel}
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-md"
+            className="absolute inset-0  bg-slate-900/40 backdrop-blur-md"
           />
 
           {/* 2. The Confirmation Card */}
@@ -39,7 +39,7 @@ export default function DeleteConfirm({
           >
             <div className="flex flex-col items-center text-center">
               <div className="size-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-6 ring-8 ring-red-50/50">
-                <AlertTriangle size={32} />
+                <AlertTriangle size={30} />
               </div>
 
               <h3 className="text-xl font-black text-slate-900 mb-2">
@@ -55,14 +55,14 @@ export default function DeleteConfirm({
                 <button
                   disabled={isLoading}
                   onClick={onCancel}
-                  className="py-4 px-6 rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all cursor-pointer disabled:opacity-50"
+                  className="py-2  rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all cursor-pointer disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   disabled={isLoading}
                   onClick={onConfirm}
-                  className="py-4 px-6 rounded-2xl bg-red-500 text-white font-black shadow-lg shadow-red-500/30 hover:bg-red-600 transition-all active:scale-95 cursor-pointer disabled:opacity-50 flex items-center justify-center"
+                  className="py-2  rounded-2xl bg-red-500 text-white font-black shadow-lg shadow-red-500/30 hover:bg-red-600 transition-all active:scale-95 cursor-pointer disabled:opacity-50 flex items-center justify-center"
                 >
                   {isLoading ? (
                     <Loader2 className="animate-spin" size={20} />

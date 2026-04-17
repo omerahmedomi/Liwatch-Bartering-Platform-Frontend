@@ -94,7 +94,9 @@ export default function Navbar({ isLoggedIn }: Props) {
         {!isLoggedIn ? (
           <NavbarGuestDesktopActions />
         ) : (
-          <Suspense fallback={<LoaderCircle className="animate-spin" />}>
+          <Suspense
+            fallback={<LoaderCircle className="max-md:hidden animate-spin" />}
+          >
             {" "}
             <NavbarProfileMenu
               dropdownRef={dropdownRef}
@@ -115,17 +117,19 @@ export default function Navbar({ isLoggedIn }: Props) {
         </button>
       </div>
       {/* <ErrorBoundary fallback={'Something went wrong'}> */}
-        <Suspense >
-          <NavbarMobileDrawer
-            isOpen={isOpen}
-            isLoggedIn={isLoggedIn}
-            links={navLinks}
-            userProfilePromise={contextPromise}
-            onClose={() => setIsOpen(false)}
-            onOpenProfile={handleOpenProfile}
-            onLogout={handleLogout}
-          />
-        </Suspense>
+      <Suspense
+        fallback={<LoaderCircle className="hidden animate-spin" />}
+      >
+        <NavbarMobileDrawer
+          isOpen={isOpen}
+          isLoggedIn={isLoggedIn}
+          links={navLinks}
+          userProfilePromise={contextPromise}
+          onClose={() => setIsOpen(false)}
+          onOpenProfile={handleOpenProfile}
+          onLogout={handleLogout}
+        />
+      </Suspense>
       {/* </ErrorBoundary> */}
     </nav>
   );
