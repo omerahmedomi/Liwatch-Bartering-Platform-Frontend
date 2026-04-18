@@ -15,14 +15,12 @@ function ActionButton({
   onInitiate: () => void 
 }) {
   
-  const [userRes, checkRes] = use(fetchPromise);
-  
-  const currentUser = userRes?.data;
-  const hasRequested = checkRes?.data?.exists;
-  console.log("Current USer",currentUser)
+const { userProfile, hasRequested } = use(fetchPromise);
+const currentUserId = userProfile?.user?.id;
+
 
  //own post
-  if (currentUser?.user?.id === postUserId) {
+  if (currentUserId === postUserId) {
     return (
       <button disabled className="w-full bg-slate-50 text-slate-400 font-black uppercase tracking-widest py-4 rounded-lg flex items-center justify-center gap-2 border border-slate-200 cursor-not-allowed text-sm">
         <Edit size={18} /> Your Post
@@ -30,14 +28,14 @@ function ActionButton({
     );
   }
 
-  // request already sent
-  // if (hasRequested) {
-  //   return (
-  //     <button disabled className="w-full bg-emerald-50 text-emerald-600 font-black uppercase tracking-widest py-4 rounded-lg flex items-center justify-center gap-2 border border-emerald-200 cursor-not-allowed text-sm">
-  //       <CheckCircle size={20} strokeWidth={2.5} /> Request Pending
-  //     </button>
-  //   );
-  // }
+ // request already sent
+  if (hasRequested) {
+    return (
+      <button disabled className="w-full bg-emerald-50 text-emerald-600 font-black uppercase tracking-widest py-4 rounded-lg flex items-center justify-center gap-2 border border-emerald-200 cursor-not-allowed text-sm">
+        <CheckCircle size={20} strokeWidth={2.5} /> Request Pending
+      </button>
+    );
+  }
 
  
   return (
@@ -60,11 +58,12 @@ function TraderCard({
   authorName: string;
   authorEmail: string;
 }) {
-  // Extract the results from the same promise
-  const [, authorProfileRes] = use(fetchPromise);
+
+  const authorProfileRes = use(fetchPromise);
+  console.log(authorProfileRes)
   const profileId = authorProfileRes?.data?.profileId;
-  // console.log("AUthor profile res",authorProfileRes)
   const profileImage = authorProfileRes?.data?.profileImage;
+  
 
   return (
     <div className="bg-white p-6 border-l-3 border-indigo-700">
@@ -78,7 +77,7 @@ function TraderCard({
           {!profileImage && <User size={24} className="text-indigo-400" />}
         </div>
         <Link className="min-w-0" href={`/profile/${profileId}`}>
-          {/* Now using the actual profileId from the fetch! */}
+          
           <div className="font-black text-slate-900 hover:text-indigo-600 transition-colors ">
             {authorName}
           </div>
@@ -103,19 +102,37 @@ export default function PostSidebar({ post }: { post: any }) {
   const authorName = post?.user?.name || "Anonymous Trader";
 
   
-  const [contextPromise] = useState(() => 
-    Promise.all([
-      api.get("/api/profile/me"),
-      api.get(`/api/profile/byUserId/${post?.user?.id}`)
-    ])
+  const [userContextPromise] = useState(() =>
+    api
+      .get("/api/profile/me")
+      .then(async (res) => {
+        const userProfile = res.data;
+        const userId = userProfile?.user?.id;
+        let hasRequested = false;
+
+        // Check request ONLY if logged in and NOT the author
+        if (userId && userId !== post?.user?.id) {
+          try {
+            const checkRes = await api.post(
+              `/api/direct-swap/check-request/${userId}/${post?.postId}`,
+            );
+            hasRequested = checkRes.data.exists;
+          } catch (e) {
+            console.error("Swap check failed", e);
+          }
+        }
+        return { userProfile, hasRequested };
+      })
+      .catch(() => ({ userProfile: null, hasRequested: false })),
   );
+  const [authorProfilePromise] = useState(()=>
+  
+  api.get(`/api/profile/byUserId/${post?.user?.id}`))
 
   const handleInitiateBarter = () => {
-  //  console.log(current)
+  
     alert("Opening Barter Offer Modal... (To be implemented)");
   };
-
-  
 
   return (
     <div className="sticky top-28 space-y-6">
@@ -165,7 +182,7 @@ export default function PostSidebar({ post }: { post: any }) {
             }
           >
             <ActionButton
-              fetchPromise={contextPromise}
+              fetchPromise={userContextPromise}
               postUserId={post?.user?.id}
               onInitiate={handleInitiateBarter}
             />
@@ -186,7 +203,7 @@ export default function PostSidebar({ post }: { post: any }) {
           }
         >
           <TraderCard
-            fetchPromise={contextPromise}
+            fetchPromise={authorProfilePromise}
             authorName={authorName}
             authorEmail={post?.user?.email}
           />
