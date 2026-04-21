@@ -4,6 +4,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { ShieldAlert, User, Clock, ArrowRightLeft, CheckCircle, Edit, Loader2, AlertTriangleIcon } from "lucide-react";
 import api from "@/lib/axios";
 import Link from "next/link";
+import BarterOfferModal from "../request/BarterOfferModal";
 
 function ActionButton({ 
   fetchPromise, 
@@ -18,7 +19,7 @@ function ActionButton({
 const { userProfile, hasRequested } = use(fetchPromise);
 const currentUserId = userProfile?.user?.id;
 
-
+console.log("Has requested",hasRequested);
  //own post
   if (currentUserId === postUserId) {
     return (
@@ -97,7 +98,7 @@ function TraderCard({
 }
 export default function PostSidebar({ post }: { post: any }) {
   console.log(post)
-
+   const [isModalOpen, setIsModalOpen] = useState(false);
   const isService = post?.postType === "SERVICE";
   const authorName = post?.user?.name || "Anonymous Trader";
 
@@ -116,7 +117,8 @@ export default function PostSidebar({ post }: { post: any }) {
             const checkRes = await api.post(
               `/api/direct-swap/check-request/${userId}/${post?.postId}`,
             );
-            hasRequested = checkRes.data.exists;
+          
+            hasRequested = checkRes.data;
           } catch (e) {
             console.error("Swap check failed", e);
           }
@@ -129,10 +131,11 @@ export default function PostSidebar({ post }: { post: any }) {
   
   api.get(`/api/profile/byUserId/${post?.user?.id}`))
 
-  const handleInitiateBarter = () => {
-  
-    alert("Opening Barter Offer Modal... (To be implemented)");
-  };
+
+
+ const handleInitiateBarter = () => {
+   setIsModalOpen(true); 
+ };
 
   return (
     <div className="sticky top-28 space-y-6">
@@ -209,6 +212,16 @@ export default function PostSidebar({ post }: { post: any }) {
           />
         </Suspense>
       </ErrorBoundary>
+      <Suspense>
+        <BarterOfferModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          wantedPostId={post.postId}
+          wantedPostTitle={post.title}
+          userContextPromise={userContextPromise}
+          requestedUser={post?.user}
+        />
+      </Suspense>
     </div>
   );
 }
