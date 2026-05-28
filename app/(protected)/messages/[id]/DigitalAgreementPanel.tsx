@@ -181,7 +181,7 @@ export default function DigitalAgreementPanel({
               <button
                 onClick={handleSign}
                 disabled={isLoading}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-sm disabled:opacity-50"
+                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-sm disabled:opacity-50  cursor-pointer"
               >
                 {isLoading ? "Signing..." : "Sign Agreement"}
               </button>
@@ -197,7 +197,7 @@ export default function DigitalAgreementPanel({
             <button
               onClick={handleReject}
               disabled={isLoading}
-              className="px-5 py-3 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors disabled:opacity-50"
+              className="px-5 py-3 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors disabled:opacity-50 cursor-pointer"
             >
               Reject
             </button>

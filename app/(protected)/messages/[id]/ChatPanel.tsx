@@ -171,6 +171,27 @@ export default function ChatPanel({
 
   const showOfflineWarning = !isBrowserOnline;
   const showReconnectingWarning = isBrowserOnline && !isStompConnected;
+  // --- TELEGRAM-STYLE DATE FORMATTER ---
+  const formatDividerDate = (dateString: string) => {
+    const msgDate = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    if (msgDate.toDateString() === today.toDateString()) {
+      return "Today";
+    } else if (msgDate.toDateString() === yesterday.toDateString()) {
+      return "Yesterday";
+    } else {
+      // Returns "May 24" (or "May 24, 2025" if it's from a previous year)
+      return msgDate.toLocaleDateString(undefined, {
+        month: "long",
+        day: "numeric",
+        year:
+          msgDate.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col h-full bg-white relative max-w-4xl mx-auto border-x border-slate-100 shadow-sm">
@@ -198,32 +219,51 @@ export default function ChatPanel({
 
         {messages.map((msg, index) => {
           const isMe = msg.senderId === currentUserId;
-          return (
-            <div
-              key={msg.id || index}
-              className={`flex ${isMe ? "justify-end" : "justify-start"} mb-2`}
-            >
-              <div
-                className={`
-          max-w-[65%] px-4 py-3 rounded-2xl text-[15px] shadow-sm leading-relaxed break-words
-          ${
-            isMe
-              ? "bg-indigo-600 text-white rounded-br-sm"
-              : "bg-[#F3F4F6] text-slate-900 rounded-bl-sm"
-          }
-        `}
-              >
-                <p className="whitespace-pre-wrap">{msg.messageText}</p>
 
+          // 1. DATE LOGIC: Check if this message is the first of a new day
+          const showDateDivider =
+            index === 0 ||
+            new Date(msg.sentAt).toDateString() !==
+              new Date(messages[index - 1].sentAt).toDateString();
+
+          return (
+            // Moved the key up here to wrap both the divider and the bubble
+            <div key={msg.id || index} className="flex flex-col w-full">
+              {/* 2. THE DATE PILL: Only renders if it's a new day */}
+              {showDateDivider && (
+                <div className="flex justify-center my-4">
+                  <span className="bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm">
+                    {formatDividerDate(msg.sentAt)}
+                  </span>
+                </div>
+              )}
+
+              {/* 3. YOUR EXACT EXISTING BUBBLE CODE (Untouched) */}
+              <div
+                className={`flex ${isMe ? "justify-end" : "justify-start"} mb-2`}
+              >
                 <div
-                  className={`flex w-full justify-end text-[10px] font-bold mt-1.5 ${
-                    isMe ? "text-indigo-200" : "text-slate-400"
-                  }`}
+                  className={`
+                    max-w-[65%] px-4 py-3 rounded-2xl text-[15px] shadow-sm leading-relaxed break-words
+                    ${
+                      isMe
+                        ? "bg-indigo-600 text-white rounded-br-sm"
+                        : "bg-[#F3F4F6] text-slate-900 rounded-bl-sm"
+                    }
+                  `}
                 >
-                  {new Date(msg.sentAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  <p className="whitespace-pre-wrap">{msg.messageText}</p>
+
+                  <div
+                    className={`flex w-full justify-end text-[10px] font-bold mt-1.5 ${
+                      isMe ? "text-indigo-200" : "text-slate-400"
+                    }`}
+                  >
+                    {new Date(msg.sentAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
