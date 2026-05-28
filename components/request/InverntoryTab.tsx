@@ -98,10 +98,10 @@ export default function InventoryTab({
               }`}
             >
               <div className="size-16 rounded-xl bg-slate-100 overflow-hidden shrink-0">
-                {item.mediaList?.[0] ? (
+                {item.postImages ? (
                   <img
-                    src={item.mediaList[0].mediaUrl}
-                    className="w-full h-full object-cover"
+                    src={item.postImages[0].postImageUrl}
+                    className="w-full h-full object-contain"
                     alt=""
                   />
                 ) : (

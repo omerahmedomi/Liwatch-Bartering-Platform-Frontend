@@ -26,8 +26,8 @@ const guestLinks: NavbarLink[] = [
 
 const authenticatedLinks: NavbarLink[] = [
   { name: "Listings", href: "/listings" },
-  { name: "Messages", href: "#" },
-  { name: "Community", href: "#" },
+  { name: "Messages", href: "/messages" },
+  { name: "Community", href: "community" },
   { name: "Requests", href: "/requests" },
 ];
 
