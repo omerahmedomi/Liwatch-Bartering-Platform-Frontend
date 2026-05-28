@@ -34,27 +34,34 @@ export default function NegotiationRoom() {
   }, []);
 
   // Fetch function for initializing and refreshing
-  const fetchRoomData = async () => {
-    try {
-      let userId = currentUserId;
-      if (!userId) {
-        const userRes = await api.get("/api/profile/me");
-        userId = userRes.data?.user?.id;
-        setCurrentUserId(userId);
-      }
-      if (!userId) return;
+ const fetchRoomData = async () => {
+   try {
+     let userId = currentUserId;
+     if (!userId) {
+       const userRes = await api.get("/api/profile/me");
+       userId = userRes.data?.user?.id;
+       setCurrentUserId(userId);
+     }
+     if (!userId) return;
 
-      const negoRes = await api.post(`/api/negotiation/get-all-nego/${userId}`);
-      const allRooms = negoRes.data?.data || negoRes.data;
+     const negoRes = await api.post(`/api/negotiation/get-all-nego/${userId}`);
+     const allRooms = negoRes.data?.data || negoRes.data;
 
-      const currentRoom = allRooms.find((r: any) => r.id === negotiationId);
-      setRoomData(currentRoom);
-    } catch (error) {
-      console.error("Failed to load room context", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+     const currentRoom = allRooms.find((r: any) => r.id === negotiationId);
+
+     // --- THE FIX ---
+     // Ensure the roomData includes the agreement object we just enabled in the backend
+     setRoomData({
+       ...currentRoom,
+       agreement: currentRoom.agreement, // This pulls the agreement object from the response
+     });
+     // ----------------
+   } catch (error) {
+     console.error("Failed to load room context", error);
+   } finally {
+     setLoading(false);
+   }
+ };
 
   useEffect(() => {
     fetchRoomData();

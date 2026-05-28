@@ -14,15 +14,7 @@ import api from "@/lib/axios";
 interface DigitalAgreementPanelProps {
   barterId: number;
   isUserA: boolean;
-  agreement: {
-    id?: number;
-    status: string;
-    type: string;
-    userASigned: boolean;
-    userBSigned: boolean;
-    documentHash?: string;
-    agreementTerms?: string;
-  } | null;
+  agreement: any; // Temporarily set to 'any' to catch unexpected JSON keys
   onRefresh: () => void;
 }
 
@@ -35,12 +27,17 @@ export default function DigitalAgreementPanel({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Map boolean states based on who is currently logged in viewing the panel
-  const hasISigned = isUserA ? agreement?.userASigned : agreement?.userBSigned;
+  // STRENGTHENED LOGIC: Explicitly checking for 'true' to avoid undefined/null bugs
+  const hasISigned = isUserA
+    ? agreement?.userASigned === true
+    : agreement?.userBSigned === true;
   const hasPartnerSigned = isUserA
-    ? agreement?.userBSigned
-    : agreement?.userASigned;
-  const isFullySigned = !!agreement?.documentHash;
+    ? agreement?.userBSigned === true
+    : agreement?.userASigned === true;
+
+  // Checks if the hash exists OR if the backend status jumped straight to ACTIVE
+  const isFullySigned =
+    !!agreement?.documentHash || agreement?.status === "ACTIVE";
   const isCanceled = agreement?.status === "CANCELED";
 
   const handleSign = async () => {
@@ -66,7 +63,6 @@ export default function DigitalAgreementPanel({
       )
     )
       return;
-
     setIsLoading(true);
     try {
       await api.post(`/dga/reject_agreement/${barterId}`);
@@ -115,7 +111,6 @@ export default function DigitalAgreementPanel({
             {error}
           </div>
         )}
-
         {/* The Terms Box */}
         <div className="bg-slate-50/50 rounded-xl p-4 border border-slate-100 shadow-inner">
           <p className="text-[13px] text-slate-700 leading-relaxed font-medium">
@@ -123,9 +118,10 @@ export default function DigitalAgreementPanel({
               "By signing this document, both parties agree to the exchange of the specified items. Once both parties sign, a legally binding digital hash is generated in accordance with electronic signature laws."}
           </p>
         </div>
-
+        {/* Dynamic Signature Trackers */}
         {/* Dynamic Signature Trackers */}
         <div className="flex flex-col gap-3.5 bg-white border border-slate-100 rounded-xl p-4">
+          {/* YOUR SIGNATURE */}
           <div className="flex items-center justify-between text-sm">
             <span className="text-slate-600 font-semibold tracking-tight">
               Your Signature
@@ -143,24 +139,26 @@ export default function DigitalAgreementPanel({
 
           <div className="h-px w-full bg-slate-50" />
 
+          {/* PARTNER SIGNATURE */}
           <div className="flex items-center justify-between text-sm">
             <span className="text-slate-600 font-semibold tracking-tight">
               Partner's Signature
             </span>
             {hasPartnerSigned ? (
+              // This now shows "Signed" as soon as they complete their part
               <span className="flex items-center gap-1.5 text-emerald-600 font-bold text-xs">
                 <CheckCircle2 size={16} /> Signed
               </span>
             ) : (
-              <span className="flex items-center gap-1.5 text-slate-400 font-bold text-xs">
-                <Clock size={16} /> Waiting
+              // Only shows "Waiting" if they haven't signed yet
+              <span className="flex items-center gap-1.5 text-amber-500 font-bold text-xs">
+                <Clock size={16} /> Waiting for Signature
               </span>
             )}
           </div>
         </div>
-
-        {/* Cryptographic Hash Display (Only renders when both have signed) */}
-        {isFullySigned && (
+        {/* Cryptographic Hash Display */}
+        {isFullySigned && agreement?.documentHash && (
           <div className="mt-2 p-4 bg-slate-900 rounded-xl text-white shadow-md">
             <div className="flex items-center gap-2 mb-2">
               <ShieldCheck size={16} className="text-emerald-400" />
@@ -174,6 +172,17 @@ export default function DigitalAgreementPanel({
           </div>
         )}
 
+        {isFullySigned && agreement?.status === "ACTIVE" && (
+          <div className="mt-4 border-t border-slate-100 pt-4">
+            <button
+              onClick={() => handleDispute()} // We'll define this below
+              className="w-full flex items-center justify-center gap-2 text-red-600 font-bold py-3 rounded-xl text-sm border border-red-100 hover:bg-red-50 transition-all cursor-pointer"
+            >
+              <AlertTriangle size={16} />
+              Report an Issue / Dispute Trade
+            </button>
+          </div>
+        )}
         {/* Action Buttons */}
         {!isFullySigned && (
           <div className="pt-2 flex items-center gap-3">
@@ -181,7 +190,7 @@ export default function DigitalAgreementPanel({
               <button
                 onClick={handleSign}
                 disabled={isLoading}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-sm disabled:opacity-50  cursor-pointer"
+                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-sm disabled:opacity-50 cursor-pointer"
               >
                 {isLoading ? "Signing..." : "Sign Agreement"}
               </button>
@@ -203,6 +212,19 @@ export default function DigitalAgreementPanel({
             </button>
           </div>
         )}
+        {/* --- DIAGNOSTIC DATA INSPECTOR --- */}
+        {/* <div className="mt-4 p-3 bg-slate-100 rounded-lg border border-slate-300 text-[10px] font-mono overflow-auto">
+          <p className="font-bold text-slate-800 mb-1 uppercase">
+            Frontend Sees:
+          </p>
+          <pre className="text-slate-600">
+            {JSON.stringify(agreement, null, 2)}
+          </pre>
+          <p className="mt-2 font-bold text-indigo-600">
+            Am I User A? {isUserA ? "YES" : "NO"}
+          </p>
+        </div> */}
+        {/* --------------------------------- */}
       </div>
     </div>
   );

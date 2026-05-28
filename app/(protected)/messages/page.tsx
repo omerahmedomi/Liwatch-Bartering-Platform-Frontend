@@ -39,7 +39,7 @@ interface BarterResponseDto {
 interface NegotiationResponseDto {
   id: number;
   fairnessScore: number;
-  status: string;
+  status: any;
   barter: BarterResponseDto;
   messages: ChatDto[];
 }
@@ -134,6 +134,7 @@ export default function MessagesInbox() {
         ) : (
           <div className="grid gap-4">
             {negotiations.map((room) => {
+              console.log(room)
               const isUserA = room.barter.userA.id === currentUserId;
               const partner = isUserA ? room.barter.userB : room.barter.userA;
               const partnerName = partner.fullName || partner.name;
@@ -196,14 +197,20 @@ export default function MessagesInbox() {
                       {/* Dynamic Status Badge */}
                       <span
                         className={`shrink-0 text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md border ${
-                          room.status === "PENDING"
-                            ? "bg-amber-50 text-amber-600 border-amber-100/50"
-                            : room.status === "AGREED"
-                              ? "bg-emerald-50 text-emerald-600 border-emerald-100/50"
-                              : "bg-slate-50 text-slate-500 border-slate-200"
+                          room.agreement?.status === "PENDING"
+                            ? "bg-amber-50 text-amber-600 border-amber-100"
+                            : room.status === "ACTIVE"
+                              ? "bg-indigo-50 text-indigo-600 border-indigo-100"
+                              : room.status === "COMPLETED"
+                                ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                                : "bg-slate-50 text-slate-500 border-slate-200"
                         }`}
                       >
-                        {room.status}
+                        {room.agreement?.status === "ACTIVE"
+                          ? "Sealed"
+                          : room.agreement?.status === "PENDING"
+                            ? "Pending"
+                            : room.status}
                       </span>
                     </div>
 
