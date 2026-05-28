@@ -87,7 +87,7 @@ export default function MessagesInbox() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA]">
+      <div className="min-h-screen  flex items-center justify-center bg-[#FAFAFA]">
         <div className="relative flex items-center justify-center">
           <div className="absolute inset-0 bg-indigo-500/20 blur-xl rounded-full" />
           <Loader2
@@ -155,7 +155,7 @@ export default function MessagesInbox() {
 
               return (
                 <Link
-                  href={`/negotiation/${room.id}`}
+                  href={`/messages/${room.id}`}
                   key={room.id}
                   className="group relative bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/60 shadow-sm hover:shadow-md hover:border-indigo-200/60 transition-all duration-300 ease-out hover:-translate-y-0.5 flex flex-col sm:flex-row gap-5"
                 >
