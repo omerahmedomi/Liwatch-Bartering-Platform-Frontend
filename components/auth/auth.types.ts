@@ -1,4 +1,4 @@
-export type AuthMode = "login" | "signup";
+export type AuthMode = "login" | "signup" | "forgot";
 
 export interface AuthFormData {
   fullName: string;

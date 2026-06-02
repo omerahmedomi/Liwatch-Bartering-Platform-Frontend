@@ -19,9 +19,9 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (isChecking) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center">
         <Loader2 className="animate-spin text-indigo-600 mb-4" size={40} />
-        <p className="text-slate-600 font-medium tracking-tight">
+        <p className="text-slate-600 dark:text-slate-400 font-medium tracking-tight">
           Verifying your session...
         </p>
       </div>

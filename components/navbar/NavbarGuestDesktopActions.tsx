@@ -6,7 +6,7 @@ export default function NavbarGuestDesktopActions() {
     <div className="hidden md:flex items-center gap-6">
       <Link
         href="/auth?mode=login"
-        className="text-slate-700 font-semibold hover:text-indigo-600 transition-colors"
+        className="text-slate-700 dark:text-slate-400 font-semibold hover:text-indigo-600 transition-colors"
       >
         Log in
       </Link>

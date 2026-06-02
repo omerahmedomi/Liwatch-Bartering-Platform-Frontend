@@ -16,12 +16,12 @@ export default function CreatePostVisualsSection({
   onRemoveImage,
 }: Props) {
   return (
-    <section className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
+    <section className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm">
       <header className="mb-6">
-        <h2 className="text-xl font-black text-slate-900 tracking-tight">
+        <h2 className="text-xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
           1. Show it off
         </h2>
-        <p className="text-sm text-slate-500 font-medium">
+        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
           {postType === "ITEM"
             ? "Add up to 5 clear photos of the item from different angles."
             : "Add up to 5 images of your portfolio, workspace, or certifications."}
@@ -32,13 +32,13 @@ export default function CreatePostVisualsSection({
         {previews.map((src, index) => (
           <div
             key={src}
-            className="relative aspect-square rounded-3xl overflow-hidden border border-slate-100 group animate-in fade-in zoom-in-95"
+            className="relative aspect-square rounded-3xl overflow-hidden border border-slate-100 dark:border-slate-800 group animate-in fade-in zoom-in-95"
           >
             <img src={src} className="object-cover w-full h-full" alt="Preview" />
             <button
               type="button"
               onClick={() => onRemoveImage(index)}
-              className="absolute top-2 right-2 size-8 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-red-500 shadow-sm border border-red-50 hover:bg-red-300 hover:text-white transition-all cursor-pointer"
+              className="absolute top-2 right-2 size-8 bg-white dark:bg-slate-900/90 backdrop-blur-md rounded-full flex items-center justify-center text-red-500 shadow-sm border border-red-50 dark:border-red-900/50 hover:bg-red-300 dark:hover:bg-red-600 hover:text-white transition-all cursor-pointer"
             >
               <X size={16} />
             </button>
@@ -46,11 +46,11 @@ export default function CreatePostVisualsSection({
         ))}
 
         {previews.length < 5 && (
-          <label className="aspect-square rounded-3xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 hover:border-indigo-400 hover:bg-indigo-50/30 transition-all cursor-pointer group">
-            <div className="size-12 rounded-2xl bg-slate-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+          <label className="aspect-square rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center text-slate-400 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/30 dark:hover:bg-indigo-900/30 transition-all cursor-pointer group">
+            <div className="size-12 rounded-2xl bg-slate-50 dark:bg-slate-950 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Plus
                 size={24}
-                className="text-slate-400 group-hover:text-indigo-600"
+                className="text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
               />
             </div>
             <input

@@ -17,14 +17,13 @@ import {
   CreatePostFormState,
   CreatePostType,
 } from "./create-post/createPostForm.types";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const initialFormData: CreatePostFormState = {
   postType: "ITEM",
   title: "",
   description: "",
   category: ITEM_CATEGORIES[0],
-  exchangeType: "PERMANENT",
   location: "",
   lookingFor: "",
   termsAgreed: false,
@@ -46,7 +45,11 @@ export default function CreatePostForm() {
   const previewUrlsRef = useRef<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<CreatePostFormState>(initialFormData);
-  const router = useRouter()
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const groupId = searchParams.get("groupId") ? parseInt(searchParams.get("groupId")!) : null;
+  const isGroupOnly = searchParams.get("isGroupOnly") === "true";
 
   const availableCategories = useMemo(
     () =>
@@ -137,6 +140,18 @@ export default function CreatePostForm() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    if (!formData.title || formData.title.trim().length === 0) {
+      return toast.error("Title Required", {
+        description: "Please provide a title for your listing.",
+      });
+    }
+
+    if (!formData.description || formData.description.trim().length === 0) {
+      return toast.error("Description Required", {
+        description: "Please provide a description for your listing.",
+      });
+    }
+
     if (images.length === 0) {
       return toast.error("Visuals Required", {
         description: "A barter needs at least one image to be trusted.",
@@ -173,15 +188,12 @@ export default function CreatePostForm() {
         title: formData.title,
         description: formData.description,
         category: formData.category,
-        exchangeType: formData.exchangeType,
         location: formData.location,
         lookingFor: formData.lookingFor,
       };
 
       const postData = {
         ...baseData,
-        exchangeType:
-          baseData.postType === "SERVICE" ? "PERMANENT" : baseData.exchangeType,
         item:
           baseData.postType === "ITEM"
             ? {
@@ -193,6 +205,8 @@ export default function CreatePostForm() {
             : null,
         service: baseData.postType === "SERVICE" ? formData.service : null,
         postImages: imageUrls.map((url) => ({ postImageUrl: url })),
+        groupId: groupId,
+        isGroupOnly: isGroupOnly,
       };
 
       const response = await api.post("/api/post/createPost", postData);

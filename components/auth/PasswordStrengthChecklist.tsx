@@ -6,8 +6,8 @@ type Props = {
 
 export default function PasswordStrengthChecklist({ criteria }: Props) {
   return (
-    <div className="mt-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl animate-in fade-in slide-in-from-top-1 duration-300">
-      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+    <div className="mt-3 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl animate-in fade-in slide-in-from-top-1 duration-300">
+      <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
         Password Requirements
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">

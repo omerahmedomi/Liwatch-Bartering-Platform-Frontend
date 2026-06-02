@@ -31,16 +31,16 @@ export default function UserHomePage() {
   if (!mounted) return null;
 
   return (
-    <main className="pt-24 pb-16 min-h-screen bg-slate-50">
+    <main className="pt-24 pb-16 min-h-screen bg-slate-50 dark:bg-slate-950">
       <div className="max-w-7xl mx-auto px-6">
         {/* --- Header Section --- */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
-            <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-2">
+            <h1 className="text-4xl font-black text-slate-900 dark:text-slate-100 tracking-tight mb-2">
               Welcome back,{" "}
               <span className="text-indigo-600 italic">Trader.</span>
             </h1>
-            <p className="text-slate-500 font-medium">
+            <p className="text-slate-500 dark:text-slate-400 font-medium">
               What would you like to swap today?
             </p>
           </div>
@@ -63,14 +63,14 @@ export default function UserHomePage() {
             </p>
           </div>
         ) : posts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-slate-200 rounded-[3rem] bg-white/50 animate-in fade-in zoom-in-95 duration-500">
+          <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[3rem] bg-white dark:bg-slate-900/50 animate-in fade-in zoom-in-95 duration-500">
             <div className="size-16 rounded-3xl bg-indigo-50 flex items-center justify-center text-indigo-500 mb-4">
               <Package size={32} />
             </div>
-            <p className="text-slate-900 font-bold text-lg">
+            <p className="text-slate-900 dark:text-slate-100 font-bold text-lg">
               Your inventory is empty
             </p>
-            <p className="text-slate-500 text-sm mb-6 text-center">
+            <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 text-center">
               List your first item to start bartering with the community.
             </p>
           </div>

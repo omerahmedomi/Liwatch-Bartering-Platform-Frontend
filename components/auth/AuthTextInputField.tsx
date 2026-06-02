@@ -23,7 +23,7 @@ export default function AuthTextInputField({
 }: Props) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-slate-700 mb-2">
+      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
         {label}
       </label>
       <div className="relative">
@@ -38,7 +38,7 @@ export default function AuthTextInputField({
           required
           autoComplete={autoComplete}
           placeholder={placeholder}
-          className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-white outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 text-slate-900 placeholder:text-slate-400"
+          className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
           onChange={onChange}
         />
       </div>

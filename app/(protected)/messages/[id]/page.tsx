@@ -22,6 +22,8 @@ export default function NegotiationRoom() {
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [roomData, setRoomData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isPartnerOnline, setIsPartnerOnline] = useState(false);
+  const [isPartnerTyping, setIsPartnerTyping] = useState(false);
 
   // UI State for the Universal Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -69,7 +71,7 @@ export default function NegotiationRoom() {
 
   if (loading || !currentUserId) {
     return (
-      <div className="h-[100dvh] flex items-center justify-center bg-[#FAFAFA]">
+      <div className="h-[100dvh] flex items-center justify-center bg-[#FAFAFA] dark:bg-slate-950">
         <Loader2 className="animate-spin text-indigo-600" size={32} />
       </div>
     );
@@ -77,8 +79,8 @@ export default function NegotiationRoom() {
 
   if (!roomData) {
     return (
-      <div className="h-[100dvh] flex flex-col items-center justify-center bg-[#FAFAFA]">
-        <p className="text-slate-500 mb-4">
+      <div className="h-[100dvh] flex flex-col items-center justify-center bg-[#FAFAFA] dark:bg-slate-950">
+        <p className="text-slate-500 dark:text-slate-400 mb-4">
           Negotiation room not found or unauthorized.
         </p>
         <button
@@ -103,9 +105,9 @@ export default function NegotiationRoom() {
     roomData?.agreement != null;
 
   return (
-    <main className="h-[100dvh] pt-20 flex flex-col bg-[#FAFAFA] overflow-hidden selection:bg-indigo-100">
+    <main className="h-[100dvh] pt-20 flex flex-col bg-[#FAFAFA] dark:bg-slate-950 overflow-hidden selection:bg-indigo-100">
       {/* Room Header */}
-      <header className="h-[72px] bg-white border-b border-slate-200/60 px-4 flex items-center justify-between shrink-0 shadow-sm relative p-3 z-[1]">
+      <header className="h-[72px] bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800/60 px-4 flex items-center justify-between shrink-0 shadow-sm relative p-3 z-[1]">
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
@@ -115,37 +117,49 @@ export default function NegotiationRoom() {
           </button>
 
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-gradient-to-br from-slate-100 to-slate-50 border border-slate-200 text-indigo-700 flex items-center justify-center font-black text-sm shadow-inner overflow-hidden shrink-0">
-              {partner.profileImage ? (
-                <img
-                  src={partner.profileImage}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                partnerName.charAt(0).toUpperCase()
+            <div className="relative shrink-0">
+              <div className="relative size-10 rounded-full bg-gradient-to-br from-slate-100 to-slate-50 border border-slate-200 dark:border-slate-800 text-indigo-700 flex items-center justify-center font-black text-sm shadow-inner overflow-hidden shrink-0">
+                {partner.profileImage ? (
+                  <img
+                    src={partner.profileImage}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  partnerName.charAt(0).toUpperCase()
+                )}
+              </div>
+              {isPartnerOnline && (
+                <span className="absolute bottom-0 right-0 size-3  bg-emerald-500 border-2 border-white rounded-full z-10000! animate-in fade-in zoom-in duration-200 " />
               )}
             </div>
+
             <div className="min-w-0">
-              <h1 className="font-bold text-slate-900 leading-tight truncate">
+              <h1 className="font-bold text-slate-900 dark:text-slate-100 leading-tight truncate">
                 {partnerName}
               </h1>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 flex items-center gap-1">
-                <ShieldCheck size={12} strokeWidth={2.5} /> Secure Session
-              </p>
+              {isPartnerTyping ? (
+                <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 animate-pulse">
+                  typing...
+                </p>
+              ) : (
+                <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 flex items-center gap-1">
+                  <ShieldCheck size={12} strokeWidth={2.5} /> Secure Session
+                </p>
+              )}
             </div>
           </div>
         </div>
 
         {/* Desktop Deal Context (Hides on very small mobile to make room for button) */}
-        <div className="hidden md:flex items-center gap-3 bg-slate-50 border border-slate-100 px-4 py-2 rounded-xl mx-4">
-          <span className="text-xs font-bold text-slate-500 truncate max-w-[150px]">
+        <div className="hidden md:flex items-center gap-3 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 px-4 py-2 rounded-xl mx-4">
+          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 truncate max-w-[150px]">
             {givingPost?.title}
           </span>
-          <div className="size-6 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-sm shrink-0">
+          <div className="size-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full flex items-center justify-center shadow-sm shrink-0">
             <ArrowRightLeft size={12} className="text-indigo-500" />
           </div>
-          <span className="text-xs font-bold text-slate-900 truncate max-w-[150px]">
+          <span className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate max-w-[150px]">
             {gettingPost?.title}
           </span>
         </div>
@@ -163,12 +177,56 @@ export default function NegotiationRoom() {
         )}
       </header>
 
+      {/* AI Negotiation Guidance Banner */}
+      {roomData && roomData.fairnessScore !== null && roomData.fairnessScore !== undefined && (
+        <div className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-800/60 px-6 py-3 shrink-0 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-750 dark:text-indigo-400 font-black uppercase tracking-wider text-[10px] px-2.5 py-1 rounded-md border border-indigo-100 dark:border-indigo-900/30">
+              AI Advisor
+            </span>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-slate-500 dark:text-slate-400">Trade Fairness:</span>
+              <div className="flex items-center gap-1.5 font-black text-slate-800 dark:text-slate-100">
+                <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-extrabold ${
+                  roomData.suggestionBadgeColor === "green" 
+                    ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400" 
+                    : roomData.suggestionBadgeColor === "red" 
+                    ? "bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-450" 
+                    : "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-405"
+                }`}>
+                  {roomData.suggestionBadge || "Slightly uneven"}
+                </span>
+                <span className={`text-sm ${
+                  roomData.suggestionBadgeColor === "green" 
+                    ? "text-emerald-600 dark:text-emerald-400" 
+                    : roomData.suggestionBadgeColor === "red" 
+                    ? "text-rose-600 dark:text-rose-450" 
+                    : "text-amber-600 dark:text-amber-450"
+                }`}>
+                  {Math.round(roomData.fairnessScore)}%
+                </span>
+              </div>
+            </div>
+            {roomData.suggestionAdvice && (
+              <span className="text-slate-650 dark:text-slate-300 font-medium">
+                — {roomData.suggestionAdvice}
+              </span>
+            )}
+          </div>
+          <div className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold shrink-0">
+            ⚠ AI suggestion may make mistakes. Verify independent values.
+          </div>
+        </div>
+      )}
+
       {/* Main Workspace (Now exclusively the Chat Panel) */}
       <div className="flex-1 overflow-hidden relative">
         <ChatPanel
           currentUserId={currentUserId}
           negotiationId={negotiationId}
           status={roomData.status}
+          onPartnerStatusChange={setIsPartnerOnline}
+          onPartnerTypingChange={setIsPartnerTyping}
         />
       </div>
 
@@ -193,16 +251,16 @@ export default function NegotiationRoom() {
             />
 
             {/* Modal Container */}
-            <div className="relative w-full max-w-[480px] max-h-[90vh] flex flex-col bg-[#FAFAFA] rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-[480px] max-h-[90vh] flex flex-col bg-[#FAFAFA] dark:bg-slate-950 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
               {/* Modal Header */}
-              <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200/60 bg-white">
-                <h2 className="text-xs font-black uppercase tracking-widest text-slate-600 flex items-center gap-2">
+              <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800/60 bg-white dark:bg-slate-900">
+                <h2 className="text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 flex items-center gap-2">
                   <ShieldCheck size={16} className="text-indigo-600" />
                   Trust Center
                 </h2>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="p-1.5 text-slate-400 hover:text-slate-800 bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                  className="p-1.5 text-slate-400 hover:text-slate-800 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                 >
                   <X size={18} />
                 </button>

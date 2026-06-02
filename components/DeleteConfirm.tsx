@@ -35,19 +35,19 @@ export default function DeleteConfirm({
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="relative w-full max-w-sm bg-white rounded-[2.5rem] p-8 shadow-2xl border border-slate-100"
+            className="relative w-full max-w-sm bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl border border-slate-100 dark:border-slate-800"
           >
             <div className="flex flex-col items-center text-center">
               <div className="size-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-6 ring-8 ring-red-50/50">
                 <AlertTriangle size={30} />
               </div>
 
-              <h3 className="text-xl font-black text-slate-900 mb-2">
+              <h3 className="text-xl font-black text-slate-900 dark:text-slate-100 mb-2">
                 Delete Listing?
               </h3>
-              <p className="text-slate-500 text-sm font-medium mb-8">
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-8">
                 Are you sure you want to delete{" "}
-                <span className="font-bold text-slate-700">"{title}"</span>?
+                <span className="font-bold text-slate-700 dark:text-slate-300">"{title}"</span>?
                 This action cannot be undone.
               </p>
 
@@ -55,7 +55,7 @@ export default function DeleteConfirm({
                 <button
                   disabled={isLoading}
                   onClick={onCancel}
-                  className="py-2  rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all cursor-pointer disabled:opacity-50"
+                  className="py-2  rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-200 transition-all cursor-pointer disabled:opacity-50"
                 >
                   Cancel
                 </button>

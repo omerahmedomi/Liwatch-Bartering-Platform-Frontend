@@ -26,7 +26,7 @@ export default function ProfileHeader({
   const handleLocationSave = async () => {
     setSavingLocation(true);
     try {
-      await api.post(`/api/profile/update/${profile.profileId}`, {
+      await api.post(`/api/profile/update`, {
         location: location,
         bio: profile.bio, // Must pass existing bio so it doesn't get overwritten with null
         profileImage: imagePreview, // Pass the current image state
@@ -74,16 +74,16 @@ export default function ProfileHeader({
   };
 
   return (
-    <div className="bg-white p-8 border-l-4 border-indigo-700 shadow-xl shadow-slate-200/50 flex flex-col sm:flex-row gap-8 items-center sm:items-start relative overflow-hidden">
+    <div className="bg-white dark:bg-slate-900 p-8 border-l-4 border-indigo-700 shadow-xl shadow-slate-200/50 flex flex-col sm:flex-row gap-8 items-center sm:items-start relative overflow-hidden">
       {/* Decorative Glow */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 opacity-50" />
 
       {/* Avatar Container */}
       <div className="relative group shrink-0 z-10">
-        <div className="size-32 rounded-full bg-slate-100 border-4 border-white shadow-md overflow-hidden flex items-center justify-center relative">
+        <div className="size-32 rounded-full bg-slate-100 dark:bg-slate-800 border-4 border-white shadow-md overflow-hidden flex items-center justify-center relative">
           {/* Image Loading Overlay */}
           {isUploadingImage && (
-            <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center z-20">
+            <div className="absolute inset-0 bg-white dark:bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-20">
               <Loader2 className="animate-spin text-indigo-600" size={24} />
             </div>
           )}
@@ -123,10 +123,10 @@ export default function ProfileHeader({
       </div>
 
       <div className="flex-1 text-center sm:text-left z-10 w-full">
-        <h1 className="text-3xl font-black text-slate-900 mb-1">
+        <h1 className="text-3xl font-black text-slate-900 dark:text-slate-100 mb-1">
           {profile?.user?.name}
         </h1>
-        <div className="flex items-center justify-center sm:justify-start gap-2 text-slate-500 text-sm font-bold mb-4">
+        <div className="flex items-center justify-center sm:justify-start gap-2 text-slate-500 dark:text-slate-400 text-sm font-bold mb-4">
           <Mail size={14} className="text-indigo-500" /> {profile?.user?.email}
         </div>
 
@@ -136,7 +136,7 @@ export default function ProfileHeader({
             <input
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="bg-slate-50 border border-slate-200 rounded px-2 py-1 text-sm outline-none focus:border-indigo-500 flex-1"
+              className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded px-2 py-1 text-sm outline-none focus:border-indigo-500 flex-1"
               placeholder="Enter your location"
             />
             <button
@@ -162,7 +162,7 @@ export default function ProfileHeader({
             </button>
           </div>
         ) : (
-          <div className="flex items-center justify-center sm:justify-start gap-2 text-slate-700 font-bold">
+          <div className="flex items-center justify-center sm:justify-start gap-2 text-slate-700 dark:text-slate-300 font-bold">
             <MapPin size={18} className="text-indigo-500" />
             <span>{location || "Location not provided"}</span>
             {isOwner && (

@@ -9,10 +9,12 @@ export default function ListingMiniCard({
   item,
   isOwner,
   onDelete,
+  onEdit,
 }: {
   item: any;
   isOwner: boolean;
   onDelete: () => void;
+  onEdit: () => void;
 }) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -30,9 +32,9 @@ export default function ListingMiniCard({
   const displayImage = item.mediaList?.[0]?.mediaUrl || null;
 
   return (
-    <div className="group relative bg-slate-50 border border-slate-100 rounded-xl p-3 flex gap-4 hover:border-indigo-200 transition-all">
+    <div className="group relative bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-xl p-3 flex gap-4 hover:border-indigo-200 transition-all">
       {/* Thumbnail */}
-      <div className="size-20 rounded-lg bg-white border border-slate-200 overflow-hidden shrink-0">
+      <div className="size-20 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shrink-0">
         {displayImage ? (
           <img
             src={displayImage}
@@ -48,23 +50,23 @@ export default function ListingMiniCard({
 
       {/* Info */}
       <div className="flex-1 min-w-0 flex flex-col justify-center">
-        <h4 className="font-bold text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
+        <h4 className="font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-indigo-600 transition-colors">
           {item.title}
         </h4>
         <p className="text-[10px] font-black uppercase tracking-tighter text-slate-400 mb-1">
           {isService ? item.service?.category : item.item?.category}
         </p>
         <p className="text-xs font-bold text-indigo-600">
-          {isService ? "Service" : `${item.item?.estimatedValue} ETB`}
+          {isService ? "Service" : (item.item?.estimatedValue ? `${item.item.estimatedValue} ETB` : "Value Not Specified")}
         </p>
       </div>
 
       {/* Actions */}
-      <div className="flex flex-col gap-1 justify-center border-l border-slate-200 pl-3">
+      <div className="flex flex-col gap-1 justify-center border-l border-slate-200 dark:border-slate-800 pl-3">
         {isOwner ? (
           <>
             <button
-              onClick={() => router.push(`/listings/edit/${item.postId}`)}
+              onClick={onEdit}
               className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-md transition-all cursor-pointer"
               title="Edit Listing"
             >
@@ -79,7 +81,7 @@ export default function ListingMiniCard({
           </>
         ) : (
           <Link
-            href={`/post/${item.postId}`}
+            href={`/post/${item.postId || item.id}`}
             className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-md transition-all"
           >
             <ExternalLink size={18} />

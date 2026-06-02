@@ -14,7 +14,7 @@ export default function NavbarBrand() {
           alt="Logo"
         />
       </div>
-      <span className="text-2xl font-black text-slate-900 tracking-tighter italic">
+      <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter italic">
         LIWATCH
       </span>
     </Link>

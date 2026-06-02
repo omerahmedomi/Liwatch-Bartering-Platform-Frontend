@@ -28,13 +28,13 @@ export default function ListingsResultsSection({
   if (filteredPosts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-3 animate-in fade-in zoom-in-95 duration-500">
-        <div className="size-20 rounded-4xl bg-slate-100 flex items-center justify-center text-slate-400 mb-6">
+        <div className="size-20 rounded-4xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 mb-6">
           <Search size={32} />
         </div>
-        <h3 className="text-2xl font-black text-slate-900 mb-2">
+        <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">
           No matches found
         </h3>
-        <p className="text-slate-500 font-medium mb-8 text-center max-w-md">
+        <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 text-center max-w-md">
           We couldn&apos;t find any listings matching your current filters. Try
           adjusting your search criteria.
         </p>
@@ -52,14 +52,14 @@ export default function ListingsResultsSection({
   return (
     <>
       <div className="mb-6 flex justify-between items-end">
-        <p className="text-slate-500 font-bold text-sm uppercase tracking-widest">
-          Showing <span className="text-slate-900">{filteredPosts.length}</span>{" "}
+        <p className="text-slate-500 dark:text-slate-400 font-bold text-sm uppercase tracking-widest">
+          Showing <span className="text-slate-900 dark:text-slate-100">{filteredPosts.length}</span>{" "}
           results
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {filteredPosts.map((post) => (
-          <PostCard key={ post.id} post={post} />
+          <PostCard key={post.postId} post={post} />
         ))}
       </div>
     </>

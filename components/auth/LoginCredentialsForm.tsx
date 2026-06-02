@@ -17,6 +17,7 @@ type Props = {
   onModeChange: (mode: AuthMode) => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   onTogglePassword: () => void;
+  onForgotPasswordClick: () => void;
 };
 
 export default function LoginCredentialsForm({
@@ -30,6 +31,7 @@ export default function LoginCredentialsForm({
   onModeChange,
   onSubmit,
   onTogglePassword,
+  onForgotPasswordClick,
 }: Props) {
   return (
     <form onSubmit={onSubmit} className="space-y-5">
@@ -63,12 +65,13 @@ export default function LoginCredentialsForm({
       />
 
       <div className="flex items-center gap-4 justify-end">
-        <a
-          href="#"
-          className="text-sm font-semibold text-indigo-700 hover:text-indigo-800"
+        <button
+          type="button"
+          onClick={onForgotPasswordClick}
+          className="text-sm font-semibold text-indigo-700 hover:text-indigo-800 cursor-pointer"
         >
           Forgot password?
-        </a>
+        </button>
       </div>
 
       <button
@@ -85,7 +88,7 @@ export default function LoginCredentialsForm({
         )}
       </button>
 
-      <div className="pt-2 text-center text-sm text-slate-600">
+      <div className="pt-2 text-center text-sm text-slate-600 dark:text-slate-400">
         Don&apos;t have an account?{" "}
         <button
           type="button"

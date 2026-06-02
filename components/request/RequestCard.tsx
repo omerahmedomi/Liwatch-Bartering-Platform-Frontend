@@ -14,13 +14,16 @@ import api from "@/lib/axios";
 
 export default function RequestCard({
   request,
+  currentUserId,
   onActionComplete,
 }: {
   request: any;
+  currentUserId: number | null;
   onActionComplete: (id: number) => void;
 }) {
   const [isAccepting, setIsAccepting] = useState(false);
   const [isDeclining, setIsDeclining] = useState(false);
+  const [isCanceling, setIsCanceling] = useState(false);
 
  
   const [senderProfileImage, setSenderProfileImage] = useState<string | null>(
@@ -63,7 +66,7 @@ export default function RequestCard({
     if (!window.confirm("Are you sure you want to decline this offer?")) return;
     setIsDeclining(true);
     try {
-      await api.post(`/api/direct-swap/${id}/decline`);
+      await api.post(`/api/direct-swap/decline-request/${id}`);
       toast.success("Trade Declined");
       onActionComplete(id);
     } catch (err) {
@@ -72,15 +75,30 @@ export default function RequestCard({
     }
   };
 
+  const handleCancel = async () => {
+    if (!window.confirm("Are you sure you want to cancel your offer?")) return;
+    setIsCanceling(true);
+    try {
+      await api.post(`/api/direct-swap/cancel-request/${id}`);
+      toast.success("Trade Canceled");
+      onActionComplete(id);
+    } catch (err) {
+      toast.error("Failed to cancel trade.");
+      setIsCanceling(false);
+    }
+  };
+
+  const isSender = requestSender?.id === currentUserId;
+
   const renderPostPreview = (post: any, label: string) => {
     const image = post?.postImages;
     return (
-      <div className="flex-1 bg-slate-50 p-3 rounded-2xl border border-slate-100 flex flex-col gap-3 relative group">
+      <div className="flex-1 bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col gap-3 relative group">
         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
           {label}
         </span>
         <div className="flex items-center gap-3">
-          <div className="size-16 rounded-xl bg-white border border-slate-200 overflow-hidden shrink-0">
+          <div className="size-16 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shrink-0">
             {image && image[0] ? (
               <img
                 src={image[0]?.postImageUrl}
@@ -88,11 +106,11 @@ export default function RequestCard({
                 alt=""
               />
             ) : (
-              <div className="w-full h-full bg-slate-200" />
+              <div className="w-full h-full bg-slate-200 dark:bg-slate-700" />
             )}
           </div>
           <div className="min-w-0">
-            <h4 className="font-bold text-slate-900 truncate text-sm">
+            <h4 className="font-bold text-slate-900 dark:text-slate-100 truncate text-sm">
               {post?.title || "Untitled Post"}
             </h4>
             <p className="text-xs font-bold text-indigo-600 truncate mt-0.5">
@@ -113,7 +131,7 @@ export default function RequestCard({
   };
 
   return (
-    <div className="bg-white rounded-[2rem] p-6 shadow-xl shadow-slate-200/40 border border-slate-100 flex flex-col gap-6 transition-all hover:border-indigo-100">
+    <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-xl shadow-slate-200/40 border border-slate-100 dark:border-slate-800 flex flex-col gap-6 transition-all hover:border-indigo-100">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div className="size-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-black text-sm shrink-0 border-2 border-white shadow-sm overflow-hidden">
@@ -129,7 +147,7 @@ export default function RequestCard({
             )}
           </div>
           <div>
-            <p className="font-bold text-slate-900 text-sm">
+            <p className="font-bold text-slate-900 dark:text-slate-100 text-sm">
               <Link
                 href={`/profile/${requestSender?.id}`}
                 className="hover:text-indigo-600 transition-colors"
@@ -138,53 +156,71 @@ export default function RequestCard({
               </Link>
             </p>
             <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Sent an offer
+              {isSender ? "You sent an offer to" : "Sent you an offer"}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 text-slate-400 text-xs font-medium bg-slate-50 px-3 py-1.5 rounded-full">
+        <div className="flex items-center gap-1.5 text-slate-400 text-xs font-medium bg-slate-50 dark:bg-slate-950 px-3 py-1.5 rounded-full">
           <Clock size={12} /> {date}
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-        {renderPostPreview(requestedPost, "They Want")}
+        {renderPostPreview(requestedPost, isSender ? "You Want" : "They Want")}
 
         <div className="size-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500 shrink-0 border-4 border-white shadow-sm z-10 -my-4 sm:my-0">
           <ArrowRightLeft size={16} strokeWidth={2.5} />
         </div>
 
-        {renderPostPreview(offeredPost, "They Offer")}
+        {renderPostPreview(offeredPost, isSender ? "You Offer" : "They Offer")}
       </div>
 
-      <div className="grid grid-cols-2 gap-3 pt-2">
-        <button
-          onClick={handleDecline}
-          disabled={isDeclining || isAccepting}
-          className="py-3 px-4 rounded-xl text-slate-500 font-bold bg-slate-50 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-50 flex justify-center items-center gap-2 text-sm border border-slate-100 cursor-pointer"
-        >
-          {isDeclining ? (
-            <Loader2 size={18} className="animate-spin" />
-          ) : (
-            <>
-              <X size={18} /> Decline
-            </>
-          )}
-        </button>
-        <button
-          onClick={handleAccept}
-          disabled={isAccepting || isDeclining}
-          className="py-3 px-4 rounded-xl text-white font-black bg-indigo-600 hover:bg-indigo-700 transition-all active:scale-95 shadow-lg shadow-indigo-500/20 disabled:opacity-50 flex justify-center items-center gap-2 text-sm cursor-pointer"
-        >
-          {isAccepting ? (
-            <Loader2 size={18} className="animate-spin" />
-          ) : (
-            <>
-              <Check size={18} /> Accept Offer
-            </>
-          )}
-        </button>
-      </div>
+      {isSender ? (
+        <div className="grid grid-cols-1 gap-3 pt-2">
+          <button
+            onClick={handleCancel}
+            disabled={isCanceling}
+            className="py-3 px-4 rounded-xl text-slate-500 dark:text-slate-400 font-bold bg-slate-50 dark:bg-slate-950 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-50 flex justify-center items-center gap-2 text-sm border border-slate-100 dark:border-slate-800 cursor-pointer"
+          >
+            {isCanceling ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : (
+              <>
+                <X size={18} /> Cancel Request
+              </>
+            )}
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3 pt-2">
+          <button
+            onClick={handleDecline}
+            disabled={isDeclining || isAccepting}
+            className="py-3 px-4 rounded-xl text-slate-500 dark:text-slate-400 font-bold bg-slate-50 dark:bg-slate-950 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-50 flex justify-center items-center gap-2 text-sm border border-slate-100 dark:border-slate-800 cursor-pointer"
+          >
+            {isDeclining ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : (
+              <>
+                <X size={18} /> Decline
+              </>
+            )}
+          </button>
+          <button
+            onClick={handleAccept}
+            disabled={isAccepting || isDeclining}
+            className="py-3 px-4 rounded-xl text-white font-black bg-indigo-600 hover:bg-indigo-700 transition-all active:scale-95 shadow-lg shadow-indigo-500/20 disabled:opacity-50 flex justify-center items-center gap-2 text-sm cursor-pointer"
+          >
+            {isAccepting ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : (
+              <>
+                <Check size={18} /> Accept Offer
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,4 @@
 export type CreatePostType = "ITEM" | "SERVICE";
-export type CreatePostExchangeType = "PERMANENT" | "TEMPORARY";
 export type CreatePostItemCondition = "NEW" | "USED";
 export type CreatePostSkillLevel = "BEGINNER" | "EXPERT";
 
@@ -20,7 +19,6 @@ export interface CreatePostFormState {
   title: string;
   description: string;
   category: string;
-  exchangeType: CreatePostExchangeType;
   location: string;
   lookingFor: string;
   termsAgreed: boolean;

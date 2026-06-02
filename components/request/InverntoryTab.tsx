@@ -73,8 +73,8 @@ export default function InventoryTab({
     return (
       <div className="h-64 flex flex-col items-center justify-center px-8 text-center">
         <PackageX size={48} strokeWidth={1} className="text-slate-300 mb-4" />
-        <h3 className="text-slate-900 font-black mb-2">No Active Listings</h3>
-        <p className="text-sm text-slate-500 font-medium mb-6">
+        <h3 className="text-slate-900 dark:text-slate-100 font-black mb-2">No Active Listings</h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-6">
           You don't have any public items to trade. Use the{" "}
           <strong>Quick Offer</strong> tab to propose something instantly!
         </p>
@@ -91,13 +91,13 @@ export default function InventoryTab({
             <div
               key={item.postId}
               onClick={() => setSelectedPostId(item.postId)}
-              className={`relative bg-white p-4 rounded-2xl border-2 transition-all cursor-pointer flex gap-4 items-center ${
+              className={`relative bg-white dark:bg-slate-900 p-4 rounded-2xl border-2 transition-all cursor-pointer flex gap-4 items-center ${
                 isSelected
                   ? "border-indigo-600 shadow-md shadow-indigo-100"
-                  : "border-slate-100 hover:border-slate-300"
+                  : "border-slate-100 dark:border-slate-800 hover:border-slate-300"
               }`}
             >
-              <div className="size-16 rounded-xl bg-slate-100 overflow-hidden shrink-0">
+              <div className="size-16 rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden shrink-0">
                 {item.postImages ? (
                   <img
                     src={item.postImages[0].postImageUrl}
@@ -105,11 +105,11 @@ export default function InventoryTab({
                     alt=""
                   />
                 ) : (
-                  <div className="w-full h-full bg-slate-200" />
+                  <div className="w-full h-full bg-slate-200 dark:bg-slate-700" />
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-slate-900 truncate text-sm">
+                <h4 className="font-bold text-slate-900 dark:text-slate-100 truncate text-sm">
                   {item.title}
                 </h4>
                 <p className="text-[10px] font-black uppercase text-slate-400 mt-1">
@@ -131,7 +131,7 @@ export default function InventoryTab({
       </div>
 
     
-      <div className="absolute bottom-0 left-0 mt-5 w-full p-6 bg-white border-t border-slate-100 backdrop-blur-md bg-white/90">
+      <div className="absolute bottom-0 left-0 mt-5 w-full p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 backdrop-blur-md bg-white dark:bg-slate-900/90">
         <button
           disabled={!selectedPostId || isSubmitting}
           onClick={handleSubmit}

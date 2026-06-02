@@ -31,6 +31,11 @@ api.interceptors.response.use(
       localStorage.removeItem("liwatch_token");
       window.location.href = "/auth?mode=login";
     }
+
+    if (status === 403 && (error.response?.data === "Your account has been suspended." || error.response?.data?.message === "Your account has been suspended.")) {
+      localStorage.removeItem("liwatch_token");
+      window.location.href = "/auth?mode=login&error=suspended";
+    }
     return Promise.reject(error);
   },
 );

@@ -6,12 +6,12 @@ export default function ProfileTrustCard({
   level: string;
 }) {
   return (
-    <div className="bg-white p-6 border-l-4 border-indigo-700 shadow-sm space-y-6">
-      <h3 className="font-black text-slate-900 uppercase tracking-widest text-sm">
+    <div className="bg-white dark:bg-slate-900 p-6 border-l-4 border-indigo-700 shadow-sm space-y-6">
+      <h3 className="font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest text-sm">
         Reputation
       </h3>
       <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 bg-slate-50 rounded-xl text-center">
+        <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl text-center">
           <p className="text-2xl font-black text-indigo-600">
             {score || "0.0"}
           </p>

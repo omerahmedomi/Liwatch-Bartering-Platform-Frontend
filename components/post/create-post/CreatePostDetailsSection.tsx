@@ -20,8 +20,8 @@ export default function CreatePostDetailsSection({
   availableCategories,
 }: Props) {
   return (
-    <section className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm space-y-6">
-      <h2 className="text-xl font-black text-slate-900 tracking-tight">
+    <section className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+      <h2 className="text-xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
         2. The Details
       </h2>
 
@@ -38,7 +38,7 @@ export default function CreatePostDetailsSection({
                 category: event.target.value,
               }))
             }
-            className="w-full pl-4 pr-10 py-3.5 bg-slate-50 rounded-2xl border border-slate-100 focus:border-indigo-200 outline-none font-bold text-sm appearance-none cursor-pointer text-slate-700 hover:bg-slate-100 transition-colors"
+            className="w-full pl-4 pr-10 py-3.5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 focus:border-indigo-200 dark:focus:border-indigo-800 outline-none font-bold text-sm appearance-none cursor-pointer text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
           >
             {availableCategories.map((category) => (
               <option key={category} value={category}>
@@ -57,7 +57,7 @@ export default function CreatePostDetailsSection({
         <input
           value={formData.title}
           placeholder="Title of your item or service"
-          className="w-full text-[22px] sm:text-2xl font-extrabold text-slate-900 outline-none placeholder:text-slate-200 focus:placeholder:text-slate-100"
+          className="w-full text-[22px] sm:text-2xl font-extrabold text-slate-900 dark:text-slate-100 outline-none placeholder:text-slate-400 focus:placeholder:text-slate-300 dark:placeholder:text-slate-600 dark:focus:placeholder:text-slate-500 bg-transparent"
           onChange={(event) =>
             setFormData((current) => ({
               ...current,
@@ -68,7 +68,7 @@ export default function CreatePostDetailsSection({
         <textarea
           value={formData.description}
           placeholder="Describe the condition, history, or features..."
-          className="w-full h-32 text-slate-600 font-medium outline-none resize-none border-none focus:ring-0 placeholder:text-slate-300"
+          className="w-full h-32 text-slate-600 dark:text-slate-400 font-medium outline-none resize-none border-none focus:ring-0 placeholder:text-slate-400 dark:placeholder:text-slate-600 bg-transparent"
           onChange={(event) =>
             setFormData((current) => ({
               ...current,
@@ -78,7 +78,7 @@ export default function CreatePostDetailsSection({
         />
       </div>
 
-      <div className="pt-8 mt-6 border-t border-slate-50 animate-in fade-in duration-300">
+      <div className="pt-8 mt-6 border-t border-slate-100 dark:border-slate-800/50 animate-in fade-in duration-300">
         {formData.postType === "ITEM" ? (
           <ItemTradeDetailsFields
             formData={formData}
@@ -92,7 +92,7 @@ export default function CreatePostDetailsSection({
         )}
       </div>
 
-      <div className="pt-6 border-t border-slate-50">
+      <div className="pt-6 border-t border-slate-100 dark:border-slate-800/50">
         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-3">
           {formData.postType === "SERVICE" ? "Service Area" : "Item Location"}
         </label>

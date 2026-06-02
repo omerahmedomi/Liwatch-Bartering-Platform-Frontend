@@ -1,5 +1,4 @@
 export type PostType = "ITEM" | "SERVICE";
-export type ExchangeType = "PERMANENT" | "TEMPORARY";
 
 export interface PostImage {
   postImageUrl: string;
@@ -7,6 +6,7 @@ export interface PostImage {
 
 export interface PostUser {
   name?: string | null;
+  badgeLevel?: string | null;
 }
 
 export interface PostItemDetails {
@@ -29,7 +29,6 @@ export interface Post {
   category?: string | null;
   location?: string | null;
   postType?: PostType;
-  exchangeType?: ExchangeType;
   postImages?: PostImage[];
   user?: PostUser | null;
   item?: PostItemDetails | null;

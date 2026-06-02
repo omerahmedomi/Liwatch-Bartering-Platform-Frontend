@@ -57,15 +57,15 @@ export default function BarterOfferModal({
             initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
-            className="relative w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-slate-100 "
+            className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-slate-100 dark:border-slate-800 "
           >
             {/* Header */}
-            <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950/50">
               <div>
-                <h2 className="text-xl font-black text-slate-900">
+                <h2 className="text-xl font-black text-slate-900 dark:text-slate-100">
                   Propose a Trade
                 </h2>
-                <p className="text-sm font-medium text-slate-500 truncate max-w-sm">
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate max-w-sm">
                   For:{" "}
                   <span className="text-indigo-600 font-bold">
                     {wantedPostTitle}
@@ -74,19 +74,19 @@ export default function BarterOfferModal({
               </div>
               <button
                 onClick={onClose}
-                className="p-2 text-slate-400 hover:text-slate-700 bg-white hover:bg-slate-100 rounded-full transition-colors border border-slate-200"
+                className="p-2 text-slate-400 hover:text-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 rounded-full transition-colors border border-slate-200 dark:border-slate-800"
               >
                 <X size={20} />
               </button>
             </div>
 
             {/* tabs */}
-            <div className="flex p-2 bg-slate-100/50 border-b border-slate-100">
+            <div className="flex p-2 bg-slate-100 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
               <button
                 onClick={() => setActiveTab("inventory")}
                 className={`flex-1 py-3 text-sm font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${
                   activeTab === "inventory"
-                    ? "bg-white text-indigo-600 shadow-sm border border-slate-200/50"
+                    ? "bg-white dark:bg-slate-900 text-indigo-600 shadow-sm border border-slate-200 dark:border-slate-800/50"
                     : "text-slate-400 hover:text-slate-600"
                 }`}
               >
@@ -96,7 +96,7 @@ export default function BarterOfferModal({
                 onClick={() => setActiveTab("quick")}
                 className={`flex-1 py-3 text-sm font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${
                   activeTab === "quick"
-                    ? "bg-white text-emerald-600 shadow-sm border border-slate-200/50"
+                    ? "bg-white dark:bg-slate-900 text-emerald-600 shadow-sm border border-slate-200 dark:border-slate-800/50"
                     : "text-slate-400 hover:text-slate-600"
                 }`}
               >
@@ -105,7 +105,7 @@ export default function BarterOfferModal({
             </div>
 
             
-            <div className="flex-1 overflow-y-auto bg-slate-50">
+            <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950">
               {activeTab === "inventory" ? (
                 <InventoryTab
                   wantedPostId={wantedPostId}
@@ -117,6 +117,7 @@ export default function BarterOfferModal({
                 <QuickOfferTab
                   wantedPostId={wantedPostId}
                   onSuccess={onClose}
+                  requestedUser={requestedUser}
                 />
               )}
             </div>

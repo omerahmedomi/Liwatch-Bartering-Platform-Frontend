@@ -10,9 +10,9 @@ export default function CreatePostMatchSection({
   onChange,
 }: Props) {
   return (
-    <section className="bg-indigo-900 p-8 rounded-[2.5rem] shadow-2xl shadow-indigo-200 text-white space-y-6">
+    <section className="bg-indigo-900 p-8 rounded-[2.5rem] shadow-2xl shadow-indigo-200 dark:shadow-indigo-900/50 text-white space-y-6">
       <header className="flex items-center gap-3">
-        <div className="size-10 rounded-xl bg-white/10 flex items-center justify-center text-indigo-300">
+        <div className="size-10 rounded-xl bg-white dark:bg-slate-900/10 flex items-center justify-center text-indigo-300">
           <Info size={20} />
         </div>
         <h2 className="text-xl font-black tracking-tight">3. Your Match</h2>

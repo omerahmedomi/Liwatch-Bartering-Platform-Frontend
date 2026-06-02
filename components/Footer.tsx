@@ -16,7 +16,7 @@ export default function Footer() {
             Discord
           </a>
         </div>
-        <div className="text-slate-500 text-sm">
+        <div className="text-slate-500 dark:text-slate-400 text-sm">
           © {new Date().getFullYear()} Liwatch Inc. All rights swapped.
         </div>
       </div>

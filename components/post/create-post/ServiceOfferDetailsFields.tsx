@@ -18,7 +18,7 @@ export default function ServiceOfferDetailsFields({
           <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest block mb-3">
             Your Skill Level
           </label>
-          <div className="flex p-1.5 bg-emerald-50 rounded-2xl">
+          <div className="flex p-1.5 bg-emerald-50 dark:bg-emerald-950/50 rounded-2xl">
             {(["BEGINNER", "EXPERT"] as const).map((level) => (
               <button
                 key={level}
@@ -31,8 +31,8 @@ export default function ServiceOfferDetailsFields({
                 }
                 className={`flex-1 py-3 text-xs font-black rounded-xl transition-all ${
                   formData.service.skillLevel === level
-                    ? "bg-white text-emerald-600 shadow-sm"
-                    : "text-emerald-700/50"
+                    ? "bg-white dark:bg-slate-900 text-emerald-600 shadow-sm"
+                    : "text-emerald-700/50 dark:text-emerald-500/50"
                 }`}
               >
                 {level}
@@ -48,7 +48,7 @@ export default function ServiceOfferDetailsFields({
           <input
             value={formData.service.availability}
             placeholder="e.g. Weekends, Evenings, Anytime..."
-            className="w-full px-4 py-3.5 bg-slate-50 rounded-2xl border border-slate-100 focus:border-emerald-200 outline-none font-bold text-sm"
+            className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 focus:border-emerald-200 dark:focus:border-emerald-800 outline-none font-bold text-sm"
             onChange={(event) =>
               setFormData((current) => ({
                 ...current,
@@ -69,7 +69,7 @@ export default function ServiceOfferDetailsFields({
         <input
           value={formData.service.serviceDuration}
           placeholder="e.g. 1 Hour, 1 Month, Project-based..."
-          className="w-full px-4 py-3.5 bg-slate-50 rounded-2xl border border-slate-100 focus:border-emerald-200 outline-none font-bold text-sm"
+          className="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 focus:border-emerald-200 dark:focus:border-emerald-800 outline-none font-bold text-sm"
           onChange={(event) =>
             setFormData((current) => ({
               ...current,

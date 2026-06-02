@@ -5,6 +5,7 @@ import api from "@/lib/axios";
 import ListingMiniCard from "./ListingMiniCard";
 import Link from "next/link";
 import { toast } from "sonner";
+import EditPostModal from "./EditPostModal";
 
 export default function ProfileActiveListings({
   userId,
@@ -17,6 +18,7 @@ export default function ProfileActiveListings({
 }) {
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editPostId, setEditPostId] = useState<number | null>(null);
 
   // 1. Fetch listings for this specific user
   const fetchListings = async () => {
@@ -44,7 +46,7 @@ export default function ProfileActiveListings({
       toast.success("Listing deleted successfully", {
         description: "Your marketplace has been updated.",
         className:
-          "bg-white border-l-4 border-emerald-500 font-bold shadow-2xl p-4",
+          "bg-white dark:bg-slate-900 border-l-4 border-emerald-500 font-bold shadow-2xl p-4",
       });
     } catch (err) {
       toast.error("Could not delete listing");
@@ -52,9 +54,9 @@ export default function ProfileActiveListings({
   };
 
   return (
-    <div className="bg-white p-8 border-l-4 border-indigo-700 shadow-sm">
+    <div className="bg-white dark:bg-slate-900 p-8 border-l-4 border-indigo-700 shadow-sm">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="font-black text-slate-900 uppercase tracking-widest text-sm">
+        <h3 className="font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest text-sm">
           Active Listings ({listings.length})
         </h3>
         {isOwner && (
@@ -76,11 +78,12 @@ export default function ProfileActiveListings({
               item={item}
               isOwner={isOwner}
               onDelete={() => handleDelete(item.postId)}
+              onEdit={() => setEditPostId(item.postId)}
             />
           ))}
         </div>
       ) : (
-        <div className="h-40 border-2 border-dashed border-slate-100 rounded-2xl flex flex-col items-center justify-center text-slate-400 gap-2">
+        <div className="h-40 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl flex flex-col items-center justify-center text-slate-400 gap-2">
           <Search size={24} strokeWidth={1.5} />
           <p className="font-bold text-sm">
             {isOwner
@@ -88,6 +91,15 @@ export default function ProfileActiveListings({
               : `${userName} has no active listings.`}
           </p>
         </div>
+      )}
+
+      {editPostId && (
+        <EditPostModal
+          isOpen={!!editPostId}
+          onClose={() => setEditPostId(null)}
+          postId={editPostId}
+          onSuccess={fetchListings}
+        />
       )}
     </div>
   );

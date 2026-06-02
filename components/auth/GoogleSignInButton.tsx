@@ -10,7 +10,7 @@ export default function GoogleSignInButton({ href }: Props) {
         onClick={() => {
           window.location.href = href;
         }}
-        className="w-full flex items-center justify-center gap-3 py-3 border border-slate-200 rounded-2xl bg-white hover:bg-slate-50 transition-all font-bold text-slate-700 shadow-sm group cursor-pointer"
+        className="w-full flex items-center justify-center gap-3 py-3 border border-slate-200 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 transition-all font-bold text-slate-700 dark:text-slate-300 shadow-sm group cursor-pointer"
       >
         <svg className="size-5" viewBox="0 0 24 24">
           <path

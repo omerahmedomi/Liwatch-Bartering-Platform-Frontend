@@ -17,9 +17,6 @@ function ListingsContent() {
 
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [typeFilter, setTypeFilter] = useState(searchParams.get("type") || "ALL");
-  const [exchangeFilter, setExchangeFilter] = useState(
-    searchParams.get("exchange") || "ALL",
-  );
   const [categoryFilter, setCategoryFilter] = useState(
     searchParams.get("category") || "ALL",
   );
@@ -55,9 +52,6 @@ function ListingsContent() {
     if (typeFilter !== "ALL") {
       params.set("type", typeFilter);
     }
-    if (exchangeFilter !== "ALL") {
-      params.set("exchange", exchangeFilter);
-    }
     if (categoryFilter !== "ALL") {
       params.set("category", categoryFilter);
     }
@@ -66,7 +60,7 @@ function ListingsContent() {
     router.replace(nextQuery ? `/listings?${nextQuery}` : "/listings", {
       scroll: false,
     });
-  }, [searchQuery, typeFilter, exchangeFilter, categoryFilter, router]);
+  }, [searchQuery, typeFilter, categoryFilter, router]);
 
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
@@ -75,19 +69,16 @@ function ListingsContent() {
         (post.title ?? "").toLowerCase().includes(normalizedSearchQuery) ||
         (post.description ?? "").toLowerCase().includes(normalizedSearchQuery);
       const matchesType = typeFilter === "ALL" || post.postType === typeFilter;
-      const matchesExchange =
-        exchangeFilter === "ALL" || post.exchangeType === exchangeFilter;
       const matchesCategory =
         categoryFilter === "ALL" || post.category === categoryFilter;
 
-      return matchesSearch && matchesType && matchesExchange && matchesCategory;
+      return matchesSearch && matchesType && matchesCategory;
     });
-  }, [posts, searchQuery, typeFilter, exchangeFilter, categoryFilter]);
+  }, [posts, searchQuery, typeFilter, categoryFilter]);
 
   const clearFilters = () => {
     setSearchQuery("");
     setTypeFilter("ALL");
-    setExchangeFilter("ALL");
     setCategoryFilter("ALL");
   };
 
@@ -97,11 +88,9 @@ function ListingsContent() {
         <ListingsFiltersPanel
           categories={categories}
           categoryFilter={categoryFilter}
-          exchangeFilter={exchangeFilter}
           searchQuery={searchQuery}
           typeFilter={typeFilter}
           onCategoryFilterChange={setCategoryFilter}
-          onExchangeFilterChange={setExchangeFilter}
           onSearchQueryChange={setSearchQuery}
           onTypeFilterChange={setTypeFilter}
         />
@@ -119,7 +108,7 @@ function ListingsContent() {
 
 export default function ListingsPage() {
   return (
-    <main className="pt-20 pb-20 min-h-screen bg-slate-50">
+    <main className="pt-20 pb-20 min-h-screen bg-slate-50 dark:bg-slate-950">
       <Suspense
         fallback={
           <div className="flex h-screen items-center justify-center">

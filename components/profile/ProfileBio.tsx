@@ -17,7 +17,7 @@ export default function ProfileBio({
   const handleSave = async () => {
     setSaving(true);
     try {
-      await api.post(`/api/profile/update/${profile.profileId}`, {
+      await api.post(`/api/profile/update`, {
         location: profile.location,
         bio,
         profileImage: profile.profileImage,
@@ -29,9 +29,9 @@ export default function ProfileBio({
   };
 
   return (
-    <div className="bg-white p-8 border-l-4 border-indigo-700 shadow-sm">
+    <div className="bg-white dark:bg-slate-900 p-8 border-l-4 border-indigo-700 shadow-sm">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-black text-slate-900 uppercase tracking-widest text-sm">
+        <h3 className="font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest text-sm">
           About Me
         </h3>
         {isOwner && !isEditing && (
@@ -49,7 +49,7 @@ export default function ProfileBio({
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 p-4 rounded-lg text-sm outline-none focus:border-indigo-500 min-h-[120px]"
+            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 rounded-lg text-sm outline-none focus:border-indigo-500 min-h-[120px]"
           />
           <div className="flex justify-end gap-2">
             <button
@@ -67,7 +67,7 @@ export default function ProfileBio({
           </div>
         </div>
       ) : (
-        <p className="text-slate-600 leading-relaxed">
+        <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
           {bio || "No bio added yet."}
         </p>
       )}

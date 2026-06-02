@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronLeft, Loader2, MapPin, CalendarDays } from "lucide-react";
+import { ChevronLeft, Loader2, MapPin, CalendarDays, AlertTriangle } from "lucide-react";
 import api from "@/lib/axios";
 import PostImageGallery from "@/components/post/PostImageGallery";
 import PostSidebar from "@/components/post/PostSidebar";
@@ -34,7 +34,7 @@ export default function PostDetailsPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col h-screen items-center justify-center bg-slate-50 gap-4">
+      <div className="flex flex-col h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 gap-4">
         <Loader2 className="animate-spin text-indigo-600" size={48} />
         <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">
           Loading Details...
@@ -45,8 +45,8 @@ export default function PostDetailsPage() {
 
   if (!post) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
-        <p className="text-slate-500 font-bold">Post not found.</p>
+      <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <p className="text-slate-500 dark:text-slate-400 font-bold">Post not found.</p>
       </div>
     );
   }
@@ -59,12 +59,12 @@ export default function PostDetailsPage() {
   });
 
   return (
-    <main className="min-h-screen bg-slate-50 pt-24 pb-20">
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 pb-20">
       <div className="max-w-7xl mx-auto px-6">
         {/* --- Back Navigation --- */}
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold uppercase text-xs tracking-widest mb-8 transition-colors w-fit"
+          className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 font-bold uppercase text-xs tracking-widest mb-8 transition-colors w-fit"
         >
           <ChevronLeft size={16} /> Back to Market
         </button>
@@ -87,24 +87,24 @@ export default function PostDetailsPage() {
                 </span>
               </div>
 
-              <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-6">
+              <h1 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight leading-tight mb-6">
                 {post.title}
               </h1>
 
-              <div className="flex items-center gap-2 text-slate-500 font-medium">
+              <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-medium">
                 <MapPin size={18} className="text-indigo-500" />
                 {post?.location}
               </div>
             </div>
 
-            <hr className="border-slate-200" />
+            <hr className="border-slate-200 dark:border-slate-800" />
 
             {/* Description */}
             <div>
-              <h2 className="text-lg font-black text-slate-900 mb-4">
+              <h2 className="text-lg font-black text-slate-900 dark:text-slate-100 mb-4">
                 Description
               </h2>
-              <p className="text-slate-600 leading-relaxed whitespace-pre-line">
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line">
                 {post.description}
               </p>
             </div>
@@ -112,25 +112,25 @@ export default function PostDetailsPage() {
             {/* If it's a service, show duration/availability */}
             {post.postType === "SERVICE" && post.service && (
               <>
-                <hr className="border-slate-200" />
+                <hr className="border-slate-200 dark:border-slate-800" />
                 <div>
-                  <h2 className="text-lg font-black text-slate-900 mb-4">
+                  <h2 className="text-lg font-black text-slate-900 dark:text-slate-100 mb-4">
                     Service Details
                   </h2>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white p-4 border-l-3 border-indigo-400">
+                    <div className="bg-white dark:bg-slate-900 p-4 border-l-3 border-indigo-400">
                       <p className="text-slate-400 text-xs font-bold uppercase mb-1">
                         Duration
                       </p>
-                      <p className="text-slate-900 font-bold">
+                      <p className="text-slate-900 dark:text-slate-100 font-bold">
                         {post.service.serviceDuration}
                       </p>
                     </div>
-                    <div className="bg-white p-4 border-l-3 border-indigo-400">
+                    <div className="bg-white dark:bg-slate-900 p-4 border-l-3 border-indigo-400">
                       <p className="text-slate-400 text-xs font-bold uppercase mb-1">
                         Availability
                       </p>
-                      <p className="text-slate-900 font-bold">
+                      <p className="text-slate-900 dark:text-slate-100 font-bold">
                         {post.service.availability}
                       </p>
                     </div>
@@ -141,7 +141,7 @@ export default function PostDetailsPage() {
           </div>
 
           {/* RIGHT COLUMN: Action Sidebar Component */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <PostSidebar post={post} />
           </div>
         </div>

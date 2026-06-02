@@ -116,7 +116,7 @@ export default function SignupRegistrationForm({
         )}
       </button>
 
-      <div className="pt-2 text-center text-sm text-slate-600">
+      <div className="pt-2 text-center text-sm text-slate-600 dark:text-slate-400">
         Already have an account?{" "}
         <button
           type="button"
@@ -127,7 +127,7 @@ export default function SignupRegistrationForm({
         </button>
       </div>
 
-      <p className="text-xs leading-relaxed text-slate-500">
+      <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">
         By continuing, you agree to our Terms and acknowledge our Privacy
         Policy.
       </p>
